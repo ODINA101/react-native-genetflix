@@ -3,6 +3,10 @@ package com.netf;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.wog.videoplayer.VideoPlayerPackage;
+import com.masteratul.downloadmanager.ReactNativeDownloadManagerPackage;
+import com.sbugert.rnadmob.RNAdMobPackage;
+import com.idehub.Billing.InAppBillingBridgePackage;
 import com.BV.LinearGradient.LinearGradientPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.facebook.react.ReactNativeHost;
@@ -15,8 +19,8 @@ import com.reactnativenavigation.react.ReactGateway;
 import java.util.Arrays;
 import java.util.List;
 
- public class MainApplication extends NavigationApplication {
-   
+public class MainApplication extends NavigationApplication {
+
     @Override
     protected ReactGateway createReactGateway() {
         ReactNativeHost host = new NavigationReactNativeHost(this, isDebug(), createAdditionalReactPackages()) {
@@ -36,15 +40,14 @@ import java.util.List;
     protected List<ReactPackage> getPackages() {
         // Add additional packages you require here
         // No need to add RnnPackage and MainReactPackage
-        return Arrays.<ReactPackage>asList(
-           new VectorIconsPackage(), // eg. new VectorIconsPackage()
-            new LinearGradientPackage() 
-       );
+        return Arrays.<ReactPackage>asList(new VectorIconsPackage(), // eg. new VectorIconsPackage()
+                new ReactNativeDownloadManagerPackage(), new VideoPlayerPackage(), new LinearGradientPackage(),
+                new RNAdMobPackage(), new InAppBillingBridgePackage());
     }
-  
+
     @Override
     public List<ReactPackage> createAdditionalReactPackages() {
         return getPackages();
-   }
+    }
 
 }

@@ -83,60 +83,95 @@ this.setState({
 	_retrieveNextPage() {
 	}
 
-	_viewMovie(movieId,info,des) {
-		fetch(`http://net.adjara.com/req/jsondata/req.php?id=${info.id}&reqId=getInfo`)
-		  .then(res => res.json())
-		  .then(res => {
-			if (res['1']) {
-				console.log('serialia');
-				this.props.navigator.showModal({
-		 			screen: 'movieapp.Serie',
-		 			passProps: {
-		 				movieId:info.id,
-		 				item:Object.assign(info,{description:des}),
-						searching:true
-		 			},
-		 			backButtonHidden: true,
-		 			navigatorButtons: {
-		 				rightButtons: [
-						{
-							id:"love",
-							icon:iconsMap['ios-heart-outline']
-						},
-		 					{
-		 						id: 'close',
-		 						icon: iconsMap['ios-arrow-round-down']
-		 					}
-		 				]
-		 			}
-		 		});
-			} else {
-				console.log('filmia');
-				this.props.navigator.showModal({
-		 			screen: 'movieapp.Movie',
-		 			passProps: {
-		 				movieId,
-		 				item:Object.assign(info,{description:des}),
-						searching:true
-		 			},
-		 			backButtonHidden: true,
-		 			navigatorButtons: {
-		 				rightButtons: [
-							{
-							id:"love",
-							icon:iconsMap['ios-heart-outline']
-						  },
-		 					{
-		 						id: 'close',
-		 						icon: iconsMap['ios-arrow-round-down']
-		 					}
-		 				]
-		 			}
-		 		});
-			}
-		});
 
+	_viewMovie(movieId,info,des) { 
+
+		fetch(`http://net.adjara.com/req/jsondata/req.php?id=${info.id}&reqId=getInfo`)
+			.then(res => res.json())
+			.then(res => {
+				if (res['1']) {
+					console.log('serialia');
+					Navigation.showModal({
+						stack: {
+							children: [{
+								component: {
+									name: 'movieapp.Serie',
+									passProps: {
+								    movieId:info.id,
+		 							item:Object.assign(info,{description:des}),
+										searching:true
+									},
+									options: {
+										 topBar: {
+											height: 60,
+											elevation: 0,
+											drawBehind: true,
+											background: {
+												color: 'transparent'
+											},
+
+											rightButtons: [
+												{
+													id: "love",
+													icon: iconsMap['ios-heart-empty'],
+													color: "#FFF"
+												},
+												{
+													id: 'close',
+													icon: iconsMap['ios-arrow-round-down'],
+													color: "#FFF"
+												}
+											]
+										}
+									}
+								}
+							}]
+						}
+					});
+				} else {
+					console.log('filmia');
+					Navigation.showModal({
+						stack: {
+							children: [{
+								component: {
+									name: 'movieapp.Movie',
+									passProps: {
+										 movieId,
+		 				item:Object.assign(info,{description:des}),
+						searching:true
+									},
+									options: {
+										topBar: {
+											height: 60,
+											elevation: 0,
+											drawBehind: true,
+											background: {
+												color: 'transparent'
+											},
+
+											rightButtons: [
+												{
+													id: "love",
+													icon: iconsMap['ios-heart-empty'],
+													color: "#FFF"
+												},
+												{
+													id: 'close',
+													icon: iconsMap['ios-arrow-round-down'],
+													color: "#FFF"
+												}
+											]
+										}
+									}
+								}
+							}]
+						}
+					});
+				}
+			});
 	}
+
+ 
  componentDidMount() {
 		this.navigationEventListener = Navigation.events().bindComponent(this);
  }

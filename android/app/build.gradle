@@ -105,6 +105,7 @@ android {
          missingDimensionStrategy "RNN.reactNativeVersion", "reactNative57_5" // See note below!
         versionCode 1
         versionName "1.0"
+        multiDexEnabled true
     }
      compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -148,6 +149,10 @@ configurations.all {
 }
 
 dependencies {
+    implementation project(':react-native-native-video-player')
+    implementation project(':react-native-simple-download-manager')
+    implementation project(':react-native-admob')
+    implementation project(':react-native-billing')
     implementation project(':react-native-linear-gradient')
     implementation project(':react-native-vector-icons')
       implementation fileTree(dir: "libs", include: ["*.jar"])

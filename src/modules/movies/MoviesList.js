@@ -132,12 +132,26 @@ class MoviesList extends Component {
 										item: info
 									},
 									options: {
-										topBar: {
-											drawBehind: true,
+										 topBar: {
 											height: 60,
+											elevation: 0,
+											drawBehind: true,
 											background: {
-												color: "transparent",
+												color: 'transparent'
 											},
+
+											rightButtons: [
+												{
+													id: "love",
+													icon: iconsMap['ios-heart-empty'],
+													color: "#FFF"
+												},
+												{
+													id: 'close',
+													icon: iconsMap['ios-arrow-round-down'],
+													color: "#FFF"
+												}
+											]
 										}
 									}
 								}

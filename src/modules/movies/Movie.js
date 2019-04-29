@@ -89,10 +89,6 @@ class Movie extends Component {
 
 
 
-
-
-
-
 	}
 
 
@@ -142,7 +138,6 @@ class Movie extends Component {
 Navigation.mergeOptions(this.props.componentId, {
  
   topBar: {
- 
   	rightButtons:[
 	 									{
 	 											id:'love',
@@ -155,7 +150,7 @@ Navigation.mergeOptions(this.props.componentId, {
 												color:"#fff"
 	 									 }
 	 								 ] 
-  }
+         }
 });
 
  
@@ -257,10 +252,21 @@ Navigation.mergeOptions(this.props.componentId, {
 	}
 
 	_toggleNavbar(status) {
-		this.props.navigator.toggleNavBar({
-			to: status,
-			animated: true
+	
+	   Navigation.mergeOptions(this.props.componentId, {
+		 
+			topBar: {
+				visible:false,
+			}
 		});
+		// this.props.navigator.toggleNavBar({
+		// 	to: status,
+		// 	animated: true
+		// });
+
+
+
+
 	}
 
 	_onChangeTab({ i, ref }) {

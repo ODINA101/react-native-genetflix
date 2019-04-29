@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import LinearGradient from 'react-native-linear-gradient';
-import ScrollableTabView from 'react-native-scrollable-tab-view';
+import { ScrollableTabView, DefaultTabBar } from '@valdio/react-native-scrollable-tabview'
 import Swiper from 'react-native-swiper';
 import axios from 'axios';
 import { bindActionCreators } from 'redux';
@@ -21,13 +21,13 @@ import { connect } from 'react-redux';
 import SwitchSelector from 'react-native-switch-selector';
 import * as moviesActions from './movies.actions';
 import Series from './tabs/Series';
-import DefaultTabBar from '../_global/scrollableTabView/DefaultTabBar';
 import Info from './tabs/Info';
 import ProgressBar from '../_global/ProgressBar';
 import Trailers from './tabs/Trailers';
 import styles from './styles/Movie';
 import VideoPlayer from "react-native-native-video-player"
 import { TMDB_IMG_URL, YOUTUBE_API_KEY, YOUTUBE_URL } from '../../constants/api';
+import {Navigation} from "react-native-navigation"
 	const apiKey = '9d2bff12ed955c7f1f74b83187f188ae'
 	import Modal from "react-native-modal";
 	import { iconsMap } from '../../utils/AppIcons';
@@ -58,6 +58,7 @@ class Serie extends Component {
 			genres:[],
 			Directed:"",
 			link:"",
+			navbar:true,
 			series: [],
 			ShowModal:false,
 			QOptions:[
@@ -81,7 +82,7 @@ class Serie extends Component {
 		this._onScroll = this._onScroll.bind(this);
 		this._viewMovie = this._viewMovie.bind(this);
 		this._openYoutube = this._openYoutube.bind(this);
-		this.props.navigator.setOnNavigatorEvent(this._onNavigatorEvent.bind(this));
+		//this.props.navigator.setOnNavigatorEvent(this._onNavigatorEvent.bind(this));
 	}
 
 	componentWillMount() {
@@ -116,24 +117,26 @@ class Serie extends Component {
 			      // alert(this.props.item.id)
 			         parsedVal.forEach(item => {
 			 					   if(item.id == this.props.item.id) {
-			 							 this.props.navigator.setButtons({
-			 								rightButtons:[
-			 									{
-			 											id:'love',
-			 											icon:iconsMap['ios-heart']
-			 									},
-			 									{
-			 										 id: 'close',
-			 										 icon: iconsMap['ios-arrow-round-down']
-			 									 }
-			 								 ]
-			 							})
-
+ 
+										 Navigation.mergeOptions(this.props.componentId, {
+												topBar: {
+													rightButtons:[
+																					{
+																							id:'love',
+																							icon:iconsMap['ios-heart'],
+																							color:"#FFF"
+																					},
+																					{
+																						id: 'close',
+																							icon: iconsMap['ios-arrow-round-down'],
+																							color:"#fff"
+																					}
+																				] 
+											       				}
+											    });
 										this.setState({addedToFavorites:true,AsyncStorageData:parsedVal})
 			 						 }
 			 				})
-
-
 			 		    }
 			 		  } catch (error) {
 			 		    // Error retrieving data
@@ -233,10 +236,21 @@ class Serie extends Component {
 	}
 
 	_toggleNavbar(status) {
-		this.props.navigator.toggleNavBar({
-			to: status,
-			animated: true
+		if(status == "hidden") {
+
+  Navigation.mergeOptions(this.props.componentId, {
+			topBar: {
+				visible:false,
+			}
 		});
+		}else{
+			
+  Navigation.mergeOptions(this.props.componentId, {
+			topBar: {
+				visible:true,
+			}
+		});
+		}
 	}
 
 	_onChangeTab({ i, ref }) {
@@ -292,91 +306,147 @@ class Serie extends Component {
         } else {
             return (null);
         }
-    }
-	async _onNavigatorEvent(event) {
-		if (event.type === 'NavBarButtonPress') {
-			if (event.id === 'close') {
-				this.props.navigator.dismissModal();
-			}
-			if (event.id === 'love') {
-				if(!this.state.addedToFavorites) {
-	var value = await AsyncStorage.getItem('favorites');
- //JSON.stringify(added))
-let added;
-
- if(value !== null) {
-  added = JSON.parse(value)
-}else{
-	added = []
-}
-
-  let poster;
-
-	if(this.props.item.poster) {
-		 poster = this.props.item.poster;
-	}else{
-		poster = "http://staticnet.adjara.com/moviecontent/" + this.props.item.id + "/covers/214x321-" + this.props.item.id + ".jpg";
-	}
-
-		added.push({
-			id:this.props.item.id,
-			release_date:this.props.item.release_date,
-			director:this.props.item.director,
-			description:this.props.item.description,
-			casts:this.state.actors,
-			poster,
-			data_rating:this.props.item.data_rating,
-			imdb:this.checkImdb(this.props.item),
-			title_ge:this.props.item.title_ge,
-			title_en:this.props.item.title_en
-
-			})
-		added = JSON.stringify(added)
-
-			this._storeData("favorites",added)
-
-
-
-
-				this.props.navigator.setButtons({
-					rightButtons:[
-						{
-								id:'love',
-								icon:iconsMap['ios-heart']
-						},
-						{
-							 id: 'close',
-							 icon: iconsMap['ios-arrow-round-down']
-						 }
-					 ]
-				})
-
- }else{
-
-	 this.setState({addedToFavorites:false})
-				this.props.navigator.setButtons({
-					rightButtons:[
-						{
-								id:'love',
-								icon:iconsMap['ios-heart-outline']
-						},
-						{
-							 id: 'close',
-							 icon: iconsMap['ios-arrow-round-down']
-						 }
-					 ]
-				})
-	let favs = this.state.AsyncStorageData;
-		favs.forEach((item,id) => {
-				 if(item.id == this.props.item.id)  {
-					 favs.splice(id,1);
-					 this._storeData("favorites",JSON.stringify(favs))
-				 }
-		})
-				 }
-			}
 		}
-	}
+		
+
+
+
+
+
+
+
+ componentDidMount() {
+		this.navigationEventListener = Navigation.events().bindComponent(this);
+ }
+
+
+
+
+
+
+ async navigationButtonPressed({ buttonId }) { 
+   if(buttonId == "close") {
+	   Navigation.dismissModal(this.props.componentId);
+	   
+	 }
+	 
+	 if(buttonId == "love") {
+		 
+		if(!this.state.addedToFavorites) {
+			var value = await AsyncStorage.getItem('favorites');
+		 //JSON.stringify(added))
+		let added;
+		
+		 if(value !== null) {
+			added = JSON.parse(value)
+		}else{
+			added = []
+		}
+		
+			let poster;
+		
+			if(this.props.item.poster) {
+				 poster = this.props.item.poster;
+			}else{
+				poster = "http://staticnet.adjara.com/moviecontent/" + this.props.item.id + "/covers/214x321-" + this.props.item.id + ".jpg";
+			}
+		
+				added.push({
+					id:this.props.item.id,
+					release_date:this.props.item.release_date,
+					director:this.props.item.director,
+					description:this.props.item.description,
+					casts:this.state.actors,
+					poster,
+					data_rating:this.props.item.data_rating,
+					imdb:this.checkImdb(this.props.item),
+					title_ge:this.props.item.title_ge,
+					title_en:this.props.item.title_en
+		
+					})
+				added = JSON.stringify(added)
+		
+					this._storeData("favorites",added)
+		
+		
+				 Navigation.mergeOptions(this.props.componentId, {
+		 
+			topBar: {
+			rightButtons:[
+								{
+									 id:'love',
+									 icon:iconsMap['ios-heart'],
+									 color:"#FFF"
+							 },
+							 {
+									id: 'close',
+									icon: iconsMap['ios-arrow-round-down'],
+									color:"#fff"
+								}
+							] 
+			}
+		});
+					 
+		 }else{
+		
+			 this.setState({addedToFavorites:false})
+			Navigation.mergeOptions(this.props.componentId, {
+			topBar: {
+		 rightButtons:[
+								{
+									 id:'love',
+									 icon:iconsMap['ios-heart-empty'],
+									color:"#fff"
+							 },
+							 {
+									id: 'close',
+									icon: iconsMap['ios-arrow-round-down'],
+									color:"#FFF"
+		
+								}
+							] 
+			}
+		});
+					 
+			let favs = this.state.AsyncStorageData;
+				favs.forEach((item,id) => {
+						 if(item.id == this.props.item.id)  {
+							 favs.splice(id,1);
+							 this._storeData("favorites",JSON.stringify(favs))
+						 }
+				})
+						 }
+	 }
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+ 
 	checkTitle(data) {
  		 if (data.title_ge !== "") {
  				 return (data.title_ge);
