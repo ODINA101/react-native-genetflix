@@ -13,6 +13,7 @@ import { Navigation } from "react-native-navigation"
 import styles from './styles/Drawer';
 import { iconsMap } from '../../utils/AppIcons';
  import InAppBilling from "react-native-billing";
+ 
  const itemSkus = Platform.select({
   ios: [
     'noads597'
