@@ -9,7 +9,7 @@ import {
 	View,
 	TouchableOpacity
 } from 'react-native';
-import {AsyncStorage} from 'react-native';
+import { AsyncStorage } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import LinearGradient from 'react-native-linear-gradient';
 //import ScrollableTabView from 'react-native-scrollable-tab-view';
@@ -29,22 +29,24 @@ import styles from './styles/Movie';
 import VideoPlayer from "react-native-native-video-player"
 import { TMDB_IMG_URL, YOUTUBE_API_KEY, YOUTUBE_URL } from '../../constants/api';
 import { iconsMap } from '../../utils/AppIcons';
-import downloadManager  from 'react-native-simple-download-manager';
-import {Navigation} from "react-native-navigation"
-// import {
-//   AdMobBanner,
-//   AdMobInterstitial,
-//   PublisherBanner,
-//   AdMobRewarded,
-// } from 'react-native-admob'
-	const apiKey = '9d2bff12ed955c7f1f74b83187f188ae'
-	import Modal from "react-native-modal";
+import downloadManager from 'react-native-simple-download-manager';
+import { Navigation } from "react-native-navigation"
+
+import InAppBilling from "react-native-billing";
+import {
+	AdMobBanner,
+	AdMobInterstitial,
+	PublisherBanner,
+	AdMobRewarded,
+} from 'react-native-admob'
+const apiKey = '9d2bff12ed955c7f1f74b83187f188ae'
+import Modal from "react-native-modal";
 class Movie extends Component {
-	   static navigatorStyle = {
-      drawUnderNavBar: true,
-      navBarTransparent: true,
-      navBarTranslucent: true
-   };
+	static navigatorStyle = {
+		drawUnderNavBar: true,
+		navBarTransparent: true,
+		navBarTranslucent: true
+	};
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -57,22 +59,22 @@ class Movie extends Component {
 			trailersTabHeight: null,
 			tab: 0,
 			youtubeVideos: [],
-			genres:[],
-			Directed:"",
-			link:"",
-			ShowModal:false,
-			QOptions:[
-			    { label: 'ქართული', value: '1' },
-			    { label: 'ინგლისური', value: '1.5' },
-			    { label: 'რუსული', value: '2' }
+			genres: [],
+			Directed: "",
+			link: "",
+			ShowModal: false,
+			QOptions: [
+				{ label: 'ქართული', value: '1' },
+				{ label: 'ინგლისური', value: '1.5' },
+				{ label: 'რუსული', value: '2' }
 			],
-			selectedLang:"",
-			Quality_Options:[],
-			selectedQual:"",
-			addedToFavorites:false,
-			AsyncStorageData:[],
-			downloading:false,
-			des:props.item.description
+			selectedLang: "",
+			Quality_Options: [],
+			selectedQual: "",
+			addedToFavorites: false,
+			AsyncStorageData: [],
+			downloading: false,
+			des: props.item.description
 
 		};
 
@@ -83,6 +85,7 @@ class Movie extends Component {
 		this._onScroll = this._onScroll.bind(this);
 		this._viewMovie = this._viewMovie.bind(this);
 		this._openYoutube = this._openYoutube.bind(this);
+		this.checkSubscription()
 		//this.props.navigator.setOnNavigatorEvent(this._onNavigatorEvent.bind(this));
 
 		//AdMobInterstitial.requestAd().then(() => AdMobInterstitial.showAd());
@@ -91,6 +94,23 @@ class Movie extends Component {
 
 	}
 
+	async checkSubscription() {
+		try {
+			await InAppBilling.open();
+			// If subscriptions/products are updated server-side you
+			// will have to update cache with loadOwnedPurchasesFromGoogle()
+			await InAppBilling.loadOwnedPurchasesFromGoogle();
+			const isSubscribed = await InAppBilling.isSubscribed("noads597")
+			//   console.log("Customer subscribed: ", isSubscribed);
+			if (!isSubscribed) {
+				AdMobInterstitial.requestAd().then(() => AdMobInterstitial.showAd());
+			}
+		} catch (err) {
+			console.log(err);
+		} finally {
+			await InAppBilling.close();
+		}
+	}
 
 
 
@@ -104,13 +124,13 @@ class Movie extends Component {
 
 
 	getq(data) {
-     if(data > 1000) {
-       return "HD"
-     }else{
-       return "SD"
-     }
+		if (data > 1000) {
+			return "HD"
+		} else {
+			return "SD"
+		}
 
-   }
+	}
 
 	_retrieveDetails(isRefreshed) {
 		// this.props.actions.retrieveMovieDetails(this.props.movieId)
@@ -123,113 +143,113 @@ class Movie extends Component {
 		(async () => {
 
 
-	 		  try {
-	 		    const value = await AsyncStorage.getItem('favorites');
-	 		    if (value !== null) {
-	 		      // We have data!!
-	 		      // alert(JSON.stringify(value));
-	 				 let parsedVal = JSON.parse(value)
-	 			//	 alert(JSON.stringify(parsedVal))
-	      // alert(this.props.item.id)
-	         parsedVal.forEach(item => {
-	 					   if(item.id == this.props.item.id) {
+			try {
+				const value = await AsyncStorage.getItem('favorites');
+				if (value !== null) {
+					// We have data!!
+					// alert(JSON.stringify(value));
+					let parsedVal = JSON.parse(value)
+					//	 alert(JSON.stringify(parsedVal))
+					// alert(this.props.item.id)
+					parsedVal.forEach(item => {
+						if (item.id == this.props.item.id) {
 
 
-Navigation.mergeOptions(this.props.componentId, {
- 
-  topBar: {
-  	rightButtons:[
-	 									{
-	 											id:'love',
-												 icon:iconsMap['ios-heart'],
-												 color:"#FFF"
-	 									},
-	 									{
-	 										 id: 'close',
-												icon: iconsMap['ios-arrow-round-down'],
-												color:"#fff"
-	 									 }
-	 								 ] 
-         }
-});
+							Navigation.mergeOptions(this.props.componentId, {
 
- 
-
+								topBar: {
+									rightButtons: [
+										{
+											id: 'love',
+											icon: iconsMap['ios-heart'],
+											color: "#FFF"
+										},
+										{
+											id: 'close',
+											icon: iconsMap['ios-arrow-round-down'],
+											color: "#fff"
+										}
+									]
+								}
+							});
 
 
 
 
 
-								this.setState({addedToFavorites:true,AsyncStorageData:parsedVal})
-	 						 }
-	 				})
 
 
-	 		    }
-	 		  } catch (error) {
-	 		    // Error retrieving data
-	 				alert(error)
-	 		  }
+
+							this.setState({ addedToFavorites: true, AsyncStorageData: parsedVal })
+						}
+					})
 
 
-	  })()
+				}
+			} catch (error) {
+				// Error retrieving data
+				alert(error)
+			}
+
+
+		})()
 
 
 
 
 		fetch("http://net.adjara.com/req/jsondata/req.php?id=" + this.props.item.id + "&reqId=getInfo")
-							.then(res => res.json())
-							.then(res => {
-										let genres = Object.keys(res.genres).map(i => res.genres[i])
-										let director = Object.keys(res.director).map(i => res.director[i]);
-										if(director.length > 0) {
-											this.setState({Directed:director[0]})
+			.then(res => res.json())
+			.then(res => {
+				let genres = Object.keys(res.genres).map(i => res.genres[i])
+				let director = Object.keys(res.director).map(i => res.director[i]);
+				if (director.length > 0) {
+					this.setState({ Directed: director[0] })
 
-										}
-										this.setState({genres,des:res.desc[0]})
-										fetch(
-			     		"http://net.adjara.com/req/jsondata/req.php?id=" + this.props.item.id +
-				     	"&reqId=getLangAndHd"
-		        	)
-		        	.then(res => res.json())
-		         	.then(res => {
-								  let actors = [];
-								var info = Object
-							             .keys(res)
-							             .map(i => res[i])
+				}
+				this.setState({ genres, des: res.desc[0] })
+				fetch(
+					"http://net.adjara.com/req/jsondata/req.php?id=" + this.props.item.id +
+					"&reqId=getLangAndHd"
+				)
+					.then(res => res.json())
+					.then(res => {
+						let actors = [];
+						var info = Object
+							.keys(res)
+							.map(i => res[i])
 
-							              var noption = info[0].lang.split(",")
-														var noquality =  info[0].quality.split(",")
-													//	alert(JSON.stringify(noption))
-                            let nores = [];
-                            let noqures = [];
-
-
-                              noption.map((item) => {
-																nores.push({label:item,value:item})
-															})
-															noquality.map((item) => {
-	                             noqures.push({label:this.getq(item),value:item})
-                              })
+						var noption = info[0].lang.split(",")
+						var noquality = info[0].quality.split(",")
+						//	alert(JSON.stringify(noption))
+						let nores = [];
+						let noqures = [];
 
 
-							                 this.setState({QOptions: nores, link: info[0].url,selectedLang:noption[0],Quality_Options:noqures,selectedQual:noquality[0]})
-							                 Object
-							                 .keys(res.cast)
-							                 .map(async (item) => {
-							                     actors.push({id:item,name:res.cast[item]})
-							                 })
-							              this.setState({actors, link: info[0].url})
-
-														 	this.setState({ isLoading: false });
+						noption.map((item) => {
+							nores.push({ label: item, value: item })
+						})
+						noquality.map((item) => {
+							noqures.push({ label: this.getq(item), value: item })
+						})
 
 
+						this.setState({ QOptions: nores, link: info[0].url, selectedLang: noption[0], Quality_Options: noqures, selectedQual: noquality[0] })
+						Object
+							.keys(res.cast)
+							.map(async (item) => {
+								actors.push({ id: item, name: res.cast[item] })
+							})
+						this.setState({ actors, link: info[0].url })
+
+						this.setState({ isLoading: false });
 
 
 
-             });
 
-							});
+
+					});
+
+			});
 		if (isRefreshed && this.setState({ isRefreshing: false }));
 	}
 
@@ -245,18 +265,18 @@ Navigation.mergeOptions(this.props.componentId, {
 	_onScroll(event) {
 		const contentOffsetY = event.nativeEvent.contentOffset.y.toFixed();
 		if (contentOffsetY > 150) {
-		//	this._toggleNavbar('hidden');
+			//	this._toggleNavbar('hidden');
 		} else {
-	//		this._toggleNavbar('shown');
+			//		this._toggleNavbar('shown');
 		}
 	}
 
 	_toggleNavbar(status) {
-	
-	   Navigation.mergeOptions(this.props.componentId, {
-		 
+
+		Navigation.mergeOptions(this.props.componentId, {
+
 			topBar: {
-				visible:false,
+				visible: false,
 			}
 		});
 		// this.props.navigator.toggleNavBar({
@@ -299,134 +319,134 @@ Navigation.mergeOptions(this.props.componentId, {
 	}
 
 
- componentDidMount() {
+	componentDidMount() {
 		this.navigationEventListener = Navigation.events().bindComponent(this);
- }
+	}
 
-//  componentWillMount() {
-// 	if (this.navigationEventListener) {
-//   this.navigationEventListener.remove();
-// }
-// }
+	//  componentWillMount() {
+	// 	if (this.navigationEventListener) {
+	//   this.navigationEventListener.remove();
+	// }
+	// }
 
-  async navigationButtonPressed({ buttonId }) { 
-   if(buttonId == "close") {
-	   Navigation.dismissModal(this.props.componentId);
-	   
-	 }
-	 
-	 if(buttonId == "love") {
-		 
-			 if(!this.state.addedToFavorites) {
+	async navigationButtonPressed({ buttonId }) {
+		if (buttonId == "close") {
+			Navigation.dismissModal(this.props.componentId);
 
- var value = await AsyncStorage.getItem('favorites');
- let added;
+		}
 
-  if(value !== null) {
-   added = JSON.parse(value)
- }else{
- 	added = []
- }
+		if (buttonId == "love") {
 
-   added.push({
-		 id:this.props.item.id,
-		 release_date:this.props.item.release_date,
-		 director:this.props.item.director,
-		 description:this.props.item.description,
-		 casts:this.state.actors,
-		 poster:this.props.item.poster,
-		 data_rating:this.props.item.data_rating,
-		 imdb:this.checkImdb(this.props.item),
-		 title_ge:this.props.item.title_ge,
-		 title_en:this.props.item.title_en
-	 })
+			if (!this.state.addedToFavorites) {
 
-  added = JSON.stringify(added)
+				var value = await AsyncStorage.getItem('favorites');
+				let added;
 
-     this._storeData("favorites",added)
-    Navigation.mergeOptions(this.props.componentId, {
- 
-  topBar: {
-  rightButtons:[
-			   	 {
-			      	 id:'love',
-							 icon:iconsMap['ios-heart'],
-							 color:"#FFF"
-			  	 },
-					 {
-							id: 'close',
-							icon: iconsMap['ios-arrow-round-down'],
-							color:"#fff"
-						}
-					] 
-  }
-});
-			 
-
-}else{
-	this.setState({addedToFavorites:false})
-		
-
-
-   Navigation.mergeOptions(this.props.componentId, {
-  topBar: {
- rightButtons:[
-			   	 {
-			      	 id:'love',
-							 icon:iconsMap['ios-heart-empty'],
-							color:"#fff"
-			  	 },
-					 {
-							id: 'close',
-							icon: iconsMap['ios-arrow-round-down'],
-							color:"#FFF"
-
-						}
-					] 
-  }
-});
-			 
-
- let favs = this.state.AsyncStorageData;
-   favs.forEach((item,id) => {
-        if(item.id == this.props.item.id)  {
-					favs.splice(id,1);
-					this._storeData("favorites",JSON.stringify(favs))
+				if (value !== null) {
+					added = JSON.parse(value)
+				} else {
+					added = []
 				}
-	 })
+
+				added.push({
+					id: this.props.item.id,
+					release_date: this.props.item.release_date,
+					director: this.props.item.director,
+					description: this.props.item.description,
+					casts: this.state.actors,
+					poster: this.props.item.poster,
+					data_rating: this.props.item.data_rating,
+					imdb: this.checkImdb(this.props.item),
+					title_ge: this.props.item.title_ge,
+					title_en: this.props.item.title_en
+				})
+
+				added = JSON.stringify(added)
+
+				this._storeData("favorites", added)
+				Navigation.mergeOptions(this.props.componentId, {
+
+					topBar: {
+						rightButtons: [
+							{
+								id: 'love',
+								icon: iconsMap['ios-heart'],
+								color: "#FFF"
+							},
+							{
+								id: 'close',
+								icon: iconsMap['ios-arrow-round-down'],
+								color: "#fff"
+							}
+						]
+					}
+				});
+
+
+			} else {
+				this.setState({ addedToFavorites: false })
+
+
+
+				Navigation.mergeOptions(this.props.componentId, {
+					topBar: {
+						rightButtons: [
+							{
+								id: 'love',
+								icon: iconsMap['ios-heart-empty'],
+								color: "#fff"
+							},
+							{
+								id: 'close',
+								icon: iconsMap['ios-arrow-round-down'],
+								color: "#FFF"
+
+							}
+						]
+					}
+				});
+
+
+				let favs = this.state.AsyncStorageData;
+				favs.forEach((item, id) => {
+					if (item.id == this.props.item.id) {
+						favs.splice(id, 1);
+						this._storeData("favorites", JSON.stringify(favs))
+					}
+				})
+			}
+		}
+	}
+
+
+	playMovie(item) {
+		if (this.state.downloading) {
+			const url = this.state.link + item.id + "_" + this.state.selectedLang + "_" + this.state.selectedQual + ".mp4";
+			const headers = { 'Authorization': 'movie is downloading' };
+			const config = {
+				downloadTitle: this.checkTitle(this.props.item),
+				downloadDescription: 'მიმდინარეობს გადმოწერა',
+				saveAsName: (this.props.item.id + ".mp4"),
+				allowedInRoaming: true,
+				allowedInMetered: true,
+				showInDownloads: true,
+				external: false, //when false basically means use the default Download path (version ^1.3)
+				path: "Downloads/" //if "external" is true then use this path (version ^1.3)
+			};
+
+
+			downloadManager.download(url, headers, config).then(() => {
+				console.log('Download success!');
+			}).catch(err => {
+				console.log(err);
+				if (err.reason == "ERROR_INSUFFICIENT_SPACE") {
+					alert("თქვენ არ გაქვთ საკმარისი მეხსიერება")
 				}
-	 }
-  }
-
-
-  playMovie(item) {
-		 if(this.state.downloading) {
-                                    const url = this.state.link + item.id + "_" + this.state.selectedLang + "_" + this.state.selectedQual + ".mp4";
-                                    const headers = {'Authorization': 'movie is downloading'};
-                                    const config = {
-                                      downloadTitle:this.checkTitle(this.props.item),
-                                      downloadDescription: 'მიმდინარეობს გადმოწერა',
-                                      saveAsName:(this.props.item.id + ".mp4"),
-                                      allowedInRoaming: true,
-                                      allowedInMetered: true,
-                                      showInDownloads: true,
-                                      external: false, //when false basically means use the default Download path (version ^1.3)
-                                      path: "Downloads/" //if "external" is true then use this path (version ^1.3)
-                                    };
-
-
-                                    downloadManager.download(url, headers, config).then(()=>{
-                                      console.log('Download success!');
-                                    }).catch(err=>{
-                                      console.log(err);
-                                      if(err.reason == "ERROR_INSUFFICIENT_SPACE") {
-                                          alert("თქვენ არ გაქვთ საკმარისი მეხსიერება")
-                                      }
-                                    })
-		 }else{
-		VideoPlayer.showVideoPlayer(this.state.link + item.id + "_" + this.state.selectedLang + "_" + this.state.selectedQual + ".mp4")
-		 }
-		 this.setState({ShowModal:false})
+			})
+		} else {
+			VideoPlayer.showVideoPlayer(this.state.link + item.id + "_" + this.state.selectedLang + "_" + this.state.selectedQual + ".mp4")
+		}
+		this.setState({ ShowModal: false })
 	}
 
 	_openYoutube(youtubeUrl) {
@@ -440,24 +460,24 @@ Navigation.mergeOptions(this.props.componentId, {
 	}
 
 
-	_storeData = async (data1,data2) => {
-	  try {
-	    await AsyncStorage.setItem(data1,data2);
-	  } catch (error) {
-	    // Error saving data
-	  }
+	_storeData = async (data1, data2) => {
+		try {
+			await AsyncStorage.setItem(data1, data2);
+		} catch (error) {
+			// Error saving data
+		}
 	};
 
 
-async _onNavigatorEvent(event) {
+	async _onNavigatorEvent(event) {
 		if (event.type === 'NavBarButtonPress') {
 			if (event.id === 'close') {
 				this.props.navigator.dismissModal();
 			}
 
-     if (event.id === 'love') {
+			if (event.id === 'love') {
 
-		 }
+			}
 		}
 	}
 
@@ -465,37 +485,37 @@ async _onNavigatorEvent(event) {
 
 
 	checkTitle(data) {
- 		 if (data.title_ge !== "") {
- 				 return (data.title_ge);
- 		 } else {
- 				 return (data.title_en);
- 		 }
-  }
+		if (data.title_ge !== "") {
+			return (data.title_ge);
+		} else {
+			return (data.title_en);
+		}
+	}
 
 	checkImdb(data) {
-        if ((parseFloat(data.data_rating).toFixed(1)) !== parseFloat(0.0).toFixed(1)) {
-            return (data.data_rating);
-        } else {
-            return (null);
-        }
-    }
+		if ((parseFloat(data.data_rating).toFixed(1)) !== parseFloat(0.0).toFixed(1)) {
+			return (data.data_rating);
+		} else {
+			return (null);
+		}
+	}
 
 	render() {
 		const iconStar = <Icon name="md-star" size={16} color="#F5B642" />;
 		const { details } = this.props;
-		const {item,searching,movieId} = this.props;
+		const { item, searching, movieId } = this.props;
 		const info = details;
 		const options = this.state.QOptions;
 		let height;
 		if (this.state.tab === 0) height = this.state.infoTabHeight;
 		if (this.state.tab === 1) height = this.state.castsTabHeight;
 		if (this.state.tab === 2) height = this.state.trailersTabHeight;
-		if(searching) {
+		if (searching) {
 
 		}
 		return (
 			this.state.isLoading ? <View style={styles.progressBar}><ProgressBar /></View> :
-			<ScrollView
+				<ScrollView
 					style={styles.container}
 					onScroll={this._onScroll.bind(this)}
 					scrollEventThrottle={100}
@@ -512,113 +532,117 @@ async _onNavigatorEvent(event) {
 						/>
 					}>
 
-						<Modal animationIn="bounceInLeft"
-          animationOut="bounceOutRight"
-          animationInTiming={1000}
-          animationOutTiming={1000}
-          backdropTransitionInTiming={1000}
-          backdropTransitionOutTiming={1000}
-					isVisible={this.state.ShowModal} >
-					<View style={{
-          flex: 1,
-          flexDirection: 'column',
-          justifyContent: 'center',
-          alignItems: 'center'}}>
-    <View style={{
-						backgroundColor:"#2B2C3D",
-            width: 300,
-            height: 330,
-						alignItems: 'center',
-					 padding:15}}>
-						<Text style={{color:"#FFF",paddingTop:20,paddingBottom:20}}>აირჩიე ენა</Text>
-						<SwitchSelector options={options} initial={0} onPress={value => this.setState({selectedLang:value})} />
-						<Text style={{color:"#FFF",paddingTop:20,paddingBottom:20}}>აირჩიე ხარისხი</Text>
-									<SwitchSelector options={this.state.Quality_Options} initial={0} onPress={value => this.setState({selectedQual:value})} />
-			     <View style={{marginTop:50,flexDirection: 'row'}}>
-			      <TouchableOpacity onPress={()=>this.setState({ShowModal:false})}style={{height:30,width:110,backgroundColor:"#2B2C3D",borderRadius:25,justifyContent: 'center',alignItems: 'center'}}>
-	           	<Text style={{color:"#FFF"}}>დახურვა</Text>
-	       	</TouchableOpacity>
-        <View style={{width:10}}/>
-	      		<TouchableOpacity  onPress={()=>this.playMovie(item)} style={{height:38,
-		    		width:110,
-		    		backgroundColor:"#FFF",borderRadius:5,justifyContent: 'center',alignItems: 'center'}}>
-	     		<Text style={{color:"#2B2C3D"}}>კარგი</Text>
-	          		</TouchableOpacity>
-             </View>
-
-            </View>
-	          </View>
-						</Modal>
-				<View style={{ height }}>
-													<View>
-									<Image  blurRadius={2}   source={{ uri: searching?("http://staticnet.adjara.com/moviecontent/" + movieId + "/covers/214x321-" + movieId + ".jpg"):(item.poster) }} style={styles.imageBackdrop} />
-
-									<LinearGradient colors={['rgba(0, 0, 0, 0.2)', 'rgba(0,0,0, 0.2)', 'rgba(0,0,0, 0.7)']} style={styles.linearGradient} />
-
-									 <View style={{position:'absolute',top:100,alignSelf: 'center',flexDirection: 'row'}}>
-									<TouchableOpacity style={{width:50,height:50}} onPress={() => {
-                     this.setState({downloading:false,ShowModal:true})
-																	}} >
-																	<Icon  size={50} color="#FFF"  name="ios-play"/>
+					<Modal animationIn="bounceInLeft"
+						animationOut="bounceOutRight"
+						animationInTiming={1000}
+						animationOutTiming={1000}
+						backdropTransitionInTiming={1000}
+						backdropTransitionOutTiming={1000}
+						isVisible={this.state.ShowModal} >
+						<View style={{
+							flex: 1,
+							flexDirection: 'column',
+							justifyContent: 'center',
+							alignItems: 'center'
+						}}>
+							<View style={{
+								backgroundColor: "#2B2C3D",
+								width: 300,
+								height: 330,
+								alignItems: 'center',
+								padding: 15
+							}}>
+								<Text style={{ color: "#FFF", paddingTop: 20, paddingBottom: 20 }}>აირჩიე ენა</Text>
+								<SwitchSelector options={options} initial={0} onPress={value => this.setState({ selectedLang: value })} />
+								<Text style={{ color: "#FFF", paddingTop: 20, paddingBottom: 20 }}>აირჩიე ხარისხი</Text>
+								<SwitchSelector options={this.state.Quality_Options} initial={0} onPress={value => this.setState({ selectedQual: value })} />
+								<View style={{ marginTop: 50, flexDirection: 'row' }}>
+									<TouchableOpacity onPress={() => this.setState({ ShowModal: false })} style={{ height: 30, width: 110, backgroundColor: "#2B2C3D", borderRadius: 25, justifyContent: 'center', alignItems: 'center' }}>
+										<Text style={{ color: "#FFF" }}>დახურვა</Text>
 									</TouchableOpacity>
-
-									<TouchableOpacity style={{width:50,height:50}} onPress={() => {
-										 this.setState({downloading:true,ShowModal:true})
-																	}} >
-																	<Icon  size={50} color="#FFF"  name="md-download"/>
+									<View style={{ width: 10 }} />
+									<TouchableOpacity onPress={() => this.playMovie(item)} style={{
+										height: 38,
+										width: 110,
+										backgroundColor: "#FFF", borderRadius: 5, justifyContent: 'center', alignItems: 'center'
+									}}>
+										<Text style={{ color: "#2B2C3D" }}>კარგი</Text>
 									</TouchableOpacity>
-
-
 								</View>
 
-
-								</View>
-
-					<View style={styles.cardContainer}>
-						<Image source={{ uri: searching?("http://staticnet.adjara.com/moviecontent/" + movieId + "/covers/214x321-" + movieId + ".jpg"):(item.poster)}} style={styles.cardImage} />
-						<View style={styles.cardDetails}>
-							<Text style={styles.cardTitle}>{this.checkTitle(item)}</Text>
-							<Text style={styles.cardTagline}></Text>
-							<View style={styles.cardGenre}>
-								{
-								 	this.state.genres.map(item => (
-							 		<Text key={item.id} style={styles.cardGenreItem}>{item}</Text>
-							  	))
-								}
-							</View>
-							<View style={styles.cardNumbers}>
-							{
-								searching?(
-									<View />
-								):(
-									<View style={styles.cardStar}>
-	               {iconStar}
-	             <Text style={styles.cardStarRatings}>{this.checkImdb(item)}</Text>
-                 </View>
-								)
-							}
-								<Text style={styles.cardRunningHours} />
 							</View>
 						</View>
-					</View>
-					<View style={styles.contentContainer}>
-						<ScrollableTabView
-							onChangeTab={this._onChangeTab}
-							renderTabBar={() => (
-								<DefaultTabBar
-									textStyle={styles.textStyle}
-									underlineStyle={styles.underlineStyle}
-									style={styles.tabBar}
-								/>
-							)}>
+					</Modal>
+					<View style={{ height }}>
+						<View>
+							<Image blurRadius={2} source={{ uri: searching ? ("http://staticnet.adjara.com/moviecontent/" + movieId + "/covers/214x321-" + movieId + ".jpg") : (item.poster) }} style={styles.imageBackdrop} />
 
-							<Info tabLabel="INFO" item={item} description={this.state.des} director={this.state.Directed} />
-							<Casts tabLabel="CASTS"  actors={this.state.actors} getTabHeight={this._getTabHeight} />
-							<Trailers tabLabel="TRAILERS" item={this.props.item} youtubeVideos={this.state.youtubeVideos} openYoutube={this._openYoutube} getTabHeight={this._getTabHeight} />
-						</ScrollableTabView>
+							<LinearGradient colors={['rgba(0, 0, 0, 0.2)', 'rgba(0,0,0, 0.2)', 'rgba(0,0,0, 0.7)']} style={styles.linearGradient} />
+
+							<View style={{ position: 'absolute', top: 100, alignSelf: 'center', flexDirection: 'row' }}>
+								<TouchableOpacity style={{ width: 50, height: 50 }} onPress={() => {
+									this.setState({ downloading: false, ShowModal: true })
+								}} >
+									<Icon size={50} color="#FFF" name="ios-play" />
+								</TouchableOpacity>
+
+								<TouchableOpacity style={{ width: 50, height: 50 }} onPress={() => {
+									this.setState({ downloading: true, ShowModal: true })
+								}} >
+									<Icon size={50} color="#FFF" name="md-download" />
+								</TouchableOpacity>
+
+
+							</View>
+
+
+						</View>
+
+						<View style={styles.cardContainer}>
+							<Image source={{ uri: searching ? ("http://staticnet.adjara.com/moviecontent/" + movieId + "/covers/214x321-" + movieId + ".jpg") : (item.poster) }} style={styles.cardImage} />
+							<View style={styles.cardDetails}>
+								<Text style={styles.cardTitle}>{this.checkTitle(item)}</Text>
+								<Text style={styles.cardTagline}></Text>
+								<View style={styles.cardGenre}>
+									{
+										this.state.genres.map(item => (
+											<Text key={item.id} style={styles.cardGenreItem}>{item}</Text>
+										))
+									}
+								</View>
+								<View style={styles.cardNumbers}>
+									{
+										searching ? (
+											<View />
+										) : (
+												<View style={styles.cardStar}>
+													{iconStar}
+													<Text style={styles.cardStarRatings}>{this.checkImdb(item)}</Text>
+												</View>
+											)
+									}
+									<Text style={styles.cardRunningHours} />
+								</View>
+							</View>
+						</View>
+						<View style={styles.contentContainer}>
+							<ScrollableTabView
+								onChangeTab={this._onChangeTab}
+								renderTabBar={() => (
+									<DefaultTabBar
+										textStyle={styles.textStyle}
+										underlineStyle={styles.underlineStyle}
+										style={styles.tabBar}
+									/>
+								)}>
+
+								<Info tabLabel="INFO" item={item} description={this.state.des} director={this.state.Directed} />
+								<Casts tabLabel="CASTS" actors={this.state.actors} getTabHeight={this._getTabHeight} />
+								<Trailers tabLabel="TRAILERS" item={this.props.item} youtubeVideos={this.state.youtubeVideos} openYoutube={this._openYoutube} getTabHeight={this._getTabHeight} />
+							</ScrollableTabView>
+						</View>
 					</View>
-				</View>
-			</ScrollView>
+				</ScrollView>
 		);
 	}
 }

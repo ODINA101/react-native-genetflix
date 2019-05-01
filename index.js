@@ -1,2 +1,2 @@
- import App from './src/app';
-console.disableYellowBox = true;
+import App from './src/app';
+//console.disableYellowBox = true;

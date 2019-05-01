@@ -27,10 +27,17 @@ import Trailers from './tabs/Trailers';
 import styles from './styles/Movie';
 import VideoPlayer from "react-native-native-video-player"
 import { TMDB_IMG_URL, YOUTUBE_API_KEY, YOUTUBE_URL } from '../../constants/api';
-import {Navigation} from "react-native-navigation"
-	const apiKey = '9d2bff12ed955c7f1f74b83187f188ae'
-	import Modal from "react-native-modal";
-	import { iconsMap } from '../../utils/AppIcons';
+import InAppBilling from "react-native-billing";
+import {
+	AdMobBanner,
+	AdMobInterstitial,
+	PublisherBanner,
+	AdMobRewarded,
+} from 'react-native-admob'
+import { Navigation } from "react-native-navigation"
+const apiKey = '9d2bff12ed955c7f1f74b83187f188ae'
+import Modal from "react-native-modal";
+import { iconsMap } from '../../utils/AppIcons';
 
 var seasons = [];
 var szn = [];
@@ -42,9 +49,9 @@ class Serie extends Component {
 	constructor(props) {
 		super(props);
 		seasons = [];
-		 szn = [];
-		  qualitiesObjs = [];
-		  nnqu = [];
+		szn = [];
+		qualitiesObjs = [];
+		nnqu = [];
 		this.state = {
 			castsTabHeight: null,
 			heightAnim: null,
@@ -55,24 +62,24 @@ class Serie extends Component {
 			trailersTabHeight: null,
 			tab: 0,
 			youtubeVideos: [],
-			genres:[],
-			Directed:"",
-			link:"",
-			navbar:true,
+			genres: [],
+			Directed: "",
+			link: "",
+			navbar: true,
 			series: [],
-			ShowModal:false,
-			QOptions:[
-			    { label: 'ქართული', value: '1' },
-			    { label: 'ინგლისური', value: '1.5' },
-			    { label: 'რუსული', value: '2' }
+			ShowModal: false,
+			QOptions: [
+				{ label: 'ქართული', value: '1' },
+				{ label: 'ინგლისური', value: '1.5' },
+				{ label: 'რუსული', value: '2' }
 			],
-			selectedLang:"",
-			Quality_Options:[],
-			selectedQual:"",
+			selectedLang: "",
+			Quality_Options: [],
+			selectedQual: "",
 			seasons: [],
-			addedToFavorites:false,
- 			AsyncStorageData:[],
-			des:this.props.item.description
+			addedToFavorites: false,
+			AsyncStorageData: [],
+			des: this.props.item.description
 		};
 
 		this._getTabHeight = this._getTabHeight.bind(this);
@@ -82,7 +89,25 @@ class Serie extends Component {
 		this._onScroll = this._onScroll.bind(this);
 		this._viewMovie = this._viewMovie.bind(this);
 		this._openYoutube = this._openYoutube.bind(this);
+		this.checkSubscription()
 		//this.props.navigator.setOnNavigatorEvent(this._onNavigatorEvent.bind(this));
+	}
+	async checkSubscription() {
+		try {
+			await InAppBilling.open();
+			// If subscriptions/products are updated server-side you
+			// will have to update cache with loadOwnedPurchasesFromGoogle()
+			await InAppBilling.loadOwnedPurchasesFromGoogle();
+			const isSubscribed = await InAppBilling.isSubscribed("noads597")
+			//   console.log("Customer subscribed: ", isSubscribed);
+			if (!isSubscribed) {
+				AdMobInterstitial.requestAd().then(() => AdMobInterstitial.showAd());
+			}
+		} catch (err) {
+			console.log(err);
+		} finally {
+			await InAppBilling.close();
+		}
 	}
 
 	componentWillMount() {
@@ -91,127 +116,127 @@ class Serie extends Component {
 	}
 
 	getq(data) {
-     if(data > 1000) {
-       return "HD"
-     }else{
-       return "SD"
-     }
-
-   }
-
-
-
- 	_retrieveDetails(isRefreshed) {
-
-
-				(async () => {
-
-
-			 		  try {
-			 		    const value = await AsyncStorage.getItem('favorites');
-			 		    if (value !== null) {
-			 		      // We have data!!
-			 		      // alert(JSON.stringify(value));
-			 				 let parsedVal = JSON.parse(value)
-			 			//	 alert(JSON.stringify(parsedVal))
-			      // alert(this.props.item.id)
-			         parsedVal.forEach(item => {
-			 					   if(item.id == this.props.item.id) {
- 
-										 Navigation.mergeOptions(this.props.componentId, {
-												topBar: {
-													rightButtons:[
-																					{
-																							id:'love',
-																							icon:iconsMap['ios-heart'],
-																							color:"#FFF"
-																					},
-																					{
-																						id: 'close',
-																							icon: iconsMap['ios-arrow-round-down'],
-																							color:"#fff"
-																					}
-																				] 
-											       				}
-											    });
-										this.setState({addedToFavorites:true,AsyncStorageData:parsedVal})
-			 						 }
-			 				})
-			 		    }
-			 		  } catch (error) {
-			 		    // Error retrieving data
-			 				alert(error)
-			 		  }
-
-
-			  })()
-    // firebase.database().ref().child("series").child(this.props.navigation.state.p
-    // a rams.key).child("parts").on("value",snapshot => {     databaseItems = [];
-    // for(var i=1;i<=snapshot.numChildren();i++) { databaseItems.push("სეზონი " +
-    // i);     }     }) this.setState({seasons:databaseItems})
-    // this.getSeason("სეზონი 1");
-
-  fetch(
-  `http://net.adjara.com/req/jsondata/req.php?id=${
-    this.props.item.id
-    }&reqId=getInfo`
-)
-  .then(res => res.json())
-  .then(res => {
-
-
-	const myarr = Object.keys(res).map(i => res[i]);
-	this.setState({ link: myarr[myarr.length - 1] ,des:res.desc});
-   //alert(myarr[myarr.length - 1])
-
-	myarr.forEach(item => {
-		if (item[1]) {
-			if (typeof item === 'object') {
-				if (Object.keys(item).length > 1) {
-					seasons.push(item);
-				}
-			}
+		if (data > 1000) {
+			return "HD"
+		} else {
+			return "SD"
 		}
-	});
 
-	var testSznNum = 0;
-
-	var szns;
-
-	if (seasons[testSznNum][testSznNum + 1].lang) {
-		szns = Object.keys(seasons[testSznNum]).map(i => {
-			if (
-          seasons[testSznNum][i].quality ||
-          seasons[testSznNum][i].lang ||
-          typeof seasons[testSznNum][i] !== 'undefined'
-        ) {
-				if (seasons[testSznNum][i].lang) {
-					return seasons[testSznNum][i];
-				} else {
-					return '';
-				}
-			}
-		});
-	} else {
-		testSznNum++;
-		szns = Object.keys(seasons[testSznNum]).map(i => {
-			if (
-          seasons[testSznNum][i].quality ||
-          seasons[testSznNum][i].lang ||
-          typeof seasons[testSznNum][i] !== 'undefined'
-        ) {
-				if (seasons[testSznNum][i].lang) {
-					return seasons[testSznNum][i];
-				} else {
-					return '';
-				}
-			}
-		});
 	}
-	szn = szns;
 
-	this.setState({ series: szn, isLoading: false, seasons });
-});
+
+
+	_retrieveDetails(isRefreshed) {
+
+
+		(async () => {
+
+
+			try {
+				const value = await AsyncStorage.getItem('favorites');
+				if (value !== null) {
+					// We have data!!
+					// alert(JSON.stringify(value));
+					let parsedVal = JSON.parse(value)
+					//	 alert(JSON.stringify(parsedVal))
+					// alert(this.props.item.id)
+					parsedVal.forEach(item => {
+						if (item.id == this.props.item.id) {
+
+							Navigation.mergeOptions(this.props.componentId, {
+								topBar: {
+									rightButtons: [
+										{
+											id: 'love',
+											icon: iconsMap['ios-heart'],
+											color: "#FFF"
+										},
+										{
+											id: 'close',
+											icon: iconsMap['ios-arrow-round-down'],
+											color: "#fff"
+										}
+									]
+								}
+							});
+							this.setState({ addedToFavorites: true, AsyncStorageData: parsedVal })
+						}
+					})
+				}
+			} catch (error) {
+				// Error retrieving data
+				alert(error)
+			}
+
+
+		})()
+		// firebase.database().ref().child("series").child(this.props.navigation.state.p
+		// a rams.key).child("parts").on("value",snapshot => {     databaseItems = [];
+		// for(var i=1;i<=snapshot.numChildren();i++) { databaseItems.push("სეზონი " +
+		// i);     }     }) this.setState({seasons:databaseItems})
+		// this.getSeason("სეზონი 1");
+
+		fetch(
+			`http://net.adjara.com/req/jsondata/req.php?id=${
+			this.props.item.id
+			}&reqId=getInfo`
+		)
+			.then(res => res.json())
+			.then(res => {
+
+
+				const myarr = Object.keys(res).map(i => res[i]);
+				this.setState({ link: myarr[myarr.length - 1], des: res.desc });
+				//alert(myarr[myarr.length - 1])
+
+				myarr.forEach(item => {
+					if (item[1]) {
+						if (typeof item === 'object') {
+							if (Object.keys(item).length > 1) {
+								seasons.push(item);
+							}
+						}
+					}
+				});
+
+				var testSznNum = 0;
+
+				var szns;
+
+				if (seasons[testSznNum][testSznNum + 1].lang) {
+					szns = Object.keys(seasons[testSznNum]).map(i => {
+						if (
+							seasons[testSznNum][i].quality ||
+							seasons[testSznNum][i].lang ||
+							typeof seasons[testSznNum][i] !== 'undefined'
+						) {
+							if (seasons[testSznNum][i].lang) {
+								return seasons[testSznNum][i];
+							} else {
+								return '';
+							}
+						}
+					});
+				} else {
+					testSznNum++;
+					szns = Object.keys(seasons[testSznNum]).map(i => {
+						if (
+							seasons[testSznNum][i].quality ||
+							seasons[testSznNum][i].lang ||
+							typeof seasons[testSznNum][i] !== 'undefined'
+						) {
+							if (seasons[testSznNum][i].lang) {
+								return seasons[testSznNum][i];
+							} else {
+								return '';
+							}
+						}
+					});
+				}
+				szn = szns;
+
+				this.setState({ series: szn, isLoading: false, seasons });
+			});
 
 
 		if (isRefreshed && this.setState({ isRefreshing: false }));
@@ -236,20 +261,20 @@ class Serie extends Component {
 	}
 
 	_toggleNavbar(status) {
-		if(status == "hidden") {
+		if (status == "hidden") {
 
-  Navigation.mergeOptions(this.props.componentId, {
-			topBar: {
-				visible:false,
-			}
-		});
-		}else{
-			
-  Navigation.mergeOptions(this.props.componentId, {
-			topBar: {
-				visible:true,
-			}
-		});
+			Navigation.mergeOptions(this.props.componentId, {
+				topBar: {
+					visible: false,
+				}
+			});
+		} else {
+
+			Navigation.mergeOptions(this.props.componentId, {
+				topBar: {
+					visible: true,
+				}
+			});
 		}
 	}
 
@@ -282,12 +307,12 @@ class Serie extends Component {
 		});
 	}
 
-	_storeData = async (data1,data2) => {
-	  try {
-	    await AsyncStorage.setItem(data1,data2);
-	  } catch (error) {
-	    // Error saving data
-	  }
+	_storeData = async (data1, data2) => {
+		try {
+			await AsyncStorage.setItem(data1, data2);
+		} catch (error) {
+			// Error saving data
+		}
 	};
 
 
@@ -296,18 +321,17 @@ class Serie extends Component {
 			if (supported) {
 				Linking.openURL(youtubeUrl);
 			} else {
-			//	ToastAndroid.show(`RN Don't know how to handle this url ${youtubeUrl}`, ToastAndroid.SHORT);
+				//	ToastAndroid.show(`RN Don't know how to handle this url ${youtubeUrl}`, ToastAndroid.SHORT);
 			}
 		});
 	}
 	checkImdb(data) {
-        if ((parseFloat(data.data_rating).toFixed(1)) !== parseFloat(0.0).toFixed(1)) {
-            return (parseFloat(data.data_rating).toFixed(1));
-        } else {
-            return (null);
-        }
+		if ((parseFloat(data.data_rating).toFixed(1)) !== parseFloat(0.0).toFixed(1)) {
+			return (parseFloat(data.data_rating).toFixed(1));
+		} else {
+			return (null);
 		}
-		
+	}
 
 
 
@@ -315,109 +339,110 @@ class Serie extends Component {
 
 
 
- componentDidMount() {
+
+	componentDidMount() {
 		this.navigationEventListener = Navigation.events().bindComponent(this);
- }
+	}
 
 
 
 
 
 
- async navigationButtonPressed({ buttonId }) { 
-   if(buttonId == "close") {
-	   Navigation.dismissModal(this.props.componentId);
-	   
-	 }
-	 
-	 if(buttonId == "love") {
-		 
-		if(!this.state.addedToFavorites) {
-			var value = await AsyncStorage.getItem('favorites');
-		 //JSON.stringify(added))
-		let added;
-		
-		 if(value !== null) {
-			added = JSON.parse(value)
-		}else{
-			added = []
+	async navigationButtonPressed({ buttonId }) {
+		if (buttonId == "close") {
+			Navigation.dismissModal(this.props.componentId);
+
 		}
-		
-			let poster;
-		
-			if(this.props.item.poster) {
-				 poster = this.props.item.poster;
-			}else{
-				poster = "http://staticnet.adjara.com/moviecontent/" + this.props.item.id + "/covers/214x321-" + this.props.item.id + ".jpg";
-			}
-		
+
+		if (buttonId == "love") {
+
+			if (!this.state.addedToFavorites) {
+				var value = await AsyncStorage.getItem('favorites');
+				//JSON.stringify(added))
+				let added;
+
+				if (value !== null) {
+					added = JSON.parse(value)
+				} else {
+					added = []
+				}
+
+				let poster;
+
+				if (this.props.item.poster) {
+					poster = this.props.item.poster;
+				} else {
+					poster = "http://staticnet.adjara.com/moviecontent/" + this.props.item.id + "/covers/214x321-" + this.props.item.id + ".jpg";
+				}
+
 				added.push({
-					id:this.props.item.id,
-					release_date:this.props.item.release_date,
-					director:this.props.item.director,
-					description:this.props.item.description,
-					casts:this.state.actors,
+					id: this.props.item.id,
+					release_date: this.props.item.release_date,
+					director: this.props.item.director,
+					description: this.props.item.description,
+					casts: this.state.actors,
 					poster,
-					data_rating:this.props.item.data_rating,
-					imdb:this.checkImdb(this.props.item),
-					title_ge:this.props.item.title_ge,
-					title_en:this.props.item.title_en
-		
-					})
-				added = JSON.stringify(added)
-		
-					this._storeData("favorites",added)
-		
-		
-				 Navigation.mergeOptions(this.props.componentId, {
-		 
-			topBar: {
-			rightButtons:[
-								{
-									 id:'love',
-									 icon:iconsMap['ios-heart'],
-									 color:"#FFF"
-							 },
-							 {
-									id: 'close',
-									icon: iconsMap['ios-arrow-round-down'],
-									color:"#fff"
-								}
-							] 
-			}
-		});
-					 
-		 }else{
-		
-			 this.setState({addedToFavorites:false})
-			Navigation.mergeOptions(this.props.componentId, {
-			topBar: {
-		 rightButtons:[
-								{
-									 id:'love',
-									 icon:iconsMap['ios-heart-empty'],
-									color:"#fff"
-							 },
-							 {
-									id: 'close',
-									icon: iconsMap['ios-arrow-round-down'],
-									color:"#FFF"
-		
-								}
-							] 
-			}
-		});
-					 
-			let favs = this.state.AsyncStorageData;
-				favs.forEach((item,id) => {
-						 if(item.id == this.props.item.id)  {
-							 favs.splice(id,1);
-							 this._storeData("favorites",JSON.stringify(favs))
-						 }
+					data_rating: this.props.item.data_rating,
+					imdb: this.checkImdb(this.props.item),
+					title_ge: this.props.item.title_ge,
+					title_en: this.props.item.title_en
+
 				})
-						 }
-	 }
-  }
+				added = JSON.stringify(added)
+
+				this._storeData("favorites", added)
+
+
+				Navigation.mergeOptions(this.props.componentId, {
+
+					topBar: {
+						rightButtons: [
+							{
+								id: 'love',
+								icon: iconsMap['ios-heart'],
+								color: "#FFF"
+							},
+							{
+								id: 'close',
+								icon: iconsMap['ios-arrow-round-down'],
+								color: "#fff"
+							}
+						]
+					}
+				});
+
+			} else {
+
+				this.setState({ addedToFavorites: false })
+				Navigation.mergeOptions(this.props.componentId, {
+					topBar: {
+						rightButtons: [
+							{
+								id: 'love',
+								icon: iconsMap['ios-heart-empty'],
+								color: "#fff"
+							},
+							{
+								id: 'close',
+								icon: iconsMap['ios-arrow-round-down'],
+								color: "#FFF"
+
+							}
+						]
+					}
+				});
+
+				let favs = this.state.AsyncStorageData;
+				favs.forEach((item, id) => {
+					if (item.id == this.props.item.id) {
+						favs.splice(id, 1);
+						this._storeData("favorites", JSON.stringify(favs))
+					}
+				})
+			}
+		}
+	}
 
 
 
@@ -432,7 +457,6 @@ class Serie extends Component {
 
 
 
- 
 
 
 
@@ -441,26 +465,27 @@ class Serie extends Component {
 
 
 
- 
 
 
 
 
- 
+
+
+
 	checkTitle(data) {
- 		 if (data.title_ge !== "") {
- 				 return (data.title_ge);
- 		 } else {
- 				 return (data.title_en);
- 		 }
-  }
+		if (data.title_ge !== "") {
+			return (data.title_ge);
+		} else {
+			return (data.title_en);
+		}
+	}
 
 
 
 	render() {
 		const iconStar = <Icon name="md-star" size={16} color="#F5B642" />;
 		const { details } = this.props;
-		const {item} = this.props;
+		const { item } = this.props;
 		const info = details;
 		const options = this.state.QOptions;
 		let height;
@@ -470,7 +495,7 @@ class Serie extends Component {
 
 		return (
 			this.state.isLoading ? <View style={styles.progressBar}><ProgressBar /></View> :
-			<ScrollView
+				<ScrollView
 					style={styles.container}
 					onScroll={this._onScroll.bind(this)}
 					scrollEventThrottle={100}
@@ -487,95 +512,99 @@ class Serie extends Component {
 						/>
 					}>
 
-						<Modal animationIn="bounceInLeft"
-          animationOut="bounceOutRight"
-          animationInTiming={1000}
-          animationOutTiming={1000}
-          backdropTransitionInTiming={1000}
-          backdropTransitionOutTiming={1000}
-					isVisible={this.state.ShowModal} >
-					<View style={{
-          flex: 1,
-          flexDirection: 'column',
-          justifyContent: 'center',
-          alignItems: 'center'}}>
-    <View style={{
-						backgroundColor:"#2B2C3D",
-            width: 300,
-            height: 330,
-						alignItems: 'center',
-					 padding:15}}>
+					<Modal animationIn="bounceInLeft"
+						animationOut="bounceOutRight"
+						animationInTiming={1000}
+						animationOutTiming={1000}
+						backdropTransitionInTiming={1000}
+						backdropTransitionOutTiming={1000}
+						isVisible={this.state.ShowModal} >
+						<View style={{
+							flex: 1,
+							flexDirection: 'column',
+							justifyContent: 'center',
+							alignItems: 'center'
+						}}>
+							<View style={{
+								backgroundColor: "#2B2C3D",
+								width: 300,
+								height: 330,
+								alignItems: 'center',
+								padding: 15
+							}}>
 
-						<Text style={{color:"#FFF",paddingTop:20,paddingBottom:20}}>აირჩიე ენა</Text>
-						<SwitchSelector options={options} initial={0} onPress={value => this.setState({selectedLang:value})} />
-						<Text style={{color:"#FFF",paddingTop:20,paddingBottom:20}}>აირჩიე ხარისხი</Text>
-
-
-
-<SwitchSelector options={this.state.Quality_Options} initial={0} onPress={value => this.setState({selectedQual:value})} />
-			<View style={{marginTop:50,flexDirection: 'row'}}>
+								<Text style={{ color: "#FFF", paddingTop: 20, paddingBottom: 20 }}>აირჩიე ენა</Text>
+								<SwitchSelector options={options} initial={0} onPress={value => this.setState({ selectedLang: value })} />
+								<Text style={{ color: "#FFF", paddingTop: 20, paddingBottom: 20 }}>აირჩიე ხარისხი</Text>
 
 
 
-			<TouchableOpacity onPress={()=>this.setState({ShowModal:false})} style={{height:30,width:110,backgroundColor:"#2B2C3D",borderRadius:25,justifyContent: 'center',alignItems: 'center'}}>
-		<Text style={{color:"#FFF"}} >დახურვა</Text>
-		</TouchableOpacity>
-		<View style={{width:10}}/>
-			<TouchableOpacity  onPress={()=>this.playMovie(item)} style={{height:38,
-				width:110,
-				backgroundColor:"#FFF",borderRadius:5,justifyContent: 'center',alignItems: 'center'}}>
-			<Text style={{color:"#2B2C3D"}}>კარგი</Text>
-			</TouchableOpacity>
-     </View>
+								<SwitchSelector options={this.state.Quality_Options} initial={0} onPress={value => this.setState({ selectedQual: value })} />
+								<View style={{ marginTop: 50, flexDirection: 'row' }}>
 
-    </View>
-	  </View>
-						</Modal>
-				<View style={{ height }}>
-													<View>
-									<Image  blurRadius={2}   source={{ uri:  item.poster?(item.poster):("http://staticnet.adjara.com/moviecontent/" + item.id + "/covers/214x321-" + item.id + ".jpg")}} style={styles.imageBackdrop} />
 
-									<LinearGradient colors={['rgba(0, 0, 0, 0.2)', 'rgba(0,0,0, 0.2)', 'rgba(0,0,0, 0.7)']} style={styles.linearGradient} />
-															</View>
 
-					<View style={styles.cardContainer}>
-						<Image source={{ uri: item.poster?(item.poster):("http://staticnet.adjara.com/moviecontent/" + item.id + "/covers/214x321-" + item.id + ".jpg") }} style={styles.cardImage} />
-						<View style={styles.cardDetails}>
-							<Text style={styles.cardTitle}>{this.checkTitle(item)}</Text>
-							<Text style={styles.cardTagline}></Text>
-							<View style={styles.cardGenre}>
-								{
-								 	this.state.genres.map(item => (
-							 		<Text key={item.id} style={styles.cardGenreItem}>{item}</Text>
-							  	))
-								}
-							</View>
-							<View style={styles.cardNumbers}>
-								<View style={styles.cardStar}>
-									{iconStar}
-									<Text style={styles.cardStarRatings}>{this.checkImdb(item)}</Text>
+									<TouchableOpacity onPress={() => this.setState({ ShowModal: false })} style={{ height: 30, width: 110, backgroundColor: "#2B2C3D", borderRadius: 25, justifyContent: 'center', alignItems: 'center' }}>
+										<Text style={{ color: "#FFF" }} >დახურვა</Text>
+									</TouchableOpacity>
+									<View style={{ width: 10 }} />
+									<TouchableOpacity onPress={() => this.playMovie(item)} style={{
+										height: 38,
+										width: 110,
+										backgroundColor: "#FFF", borderRadius: 5, justifyContent: 'center', alignItems: 'center'
+									}}>
+										<Text style={{ color: "#2B2C3D" }}>კარგი</Text>
+									</TouchableOpacity>
 								</View>
-								<Text style={styles.cardRunningHours} />
+
 							</View>
 						</View>
+					</Modal>
+					<View style={{ height }}>
+						<View>
+							<Image blurRadius={2} source={{ uri: item.poster ? (item.poster) : ("http://staticnet.adjara.com/moviecontent/" + item.id + "/covers/214x321-" + item.id + ".jpg") }} style={styles.imageBackdrop} />
+
+							<LinearGradient colors={['rgba(0, 0, 0, 0.2)', 'rgba(0,0,0, 0.2)', 'rgba(0,0,0, 0.7)']} style={styles.linearGradient} />
+						</View>
+
+						<View style={styles.cardContainer}>
+							<Image source={{ uri: item.poster ? (item.poster) : ("http://staticnet.adjara.com/moviecontent/" + item.id + "/covers/214x321-" + item.id + ".jpg") }} style={styles.cardImage} />
+							<View style={styles.cardDetails}>
+								<Text style={styles.cardTitle}>{this.checkTitle(item)}</Text>
+								<Text style={styles.cardTagline}></Text>
+								<View style={styles.cardGenre}>
+									{
+										this.state.genres.map(item => (
+											<Text key={item.id} style={styles.cardGenreItem}>{item}</Text>
+										))
+									}
+								</View>
+								<View style={styles.cardNumbers}>
+									<View style={styles.cardStar}>
+										{iconStar}
+										<Text style={styles.cardStarRatings}>{this.checkImdb(item)}</Text>
+									</View>
+									<Text style={styles.cardRunningHours} />
+								</View>
+							</View>
+						</View>
+						<View style={styles.contentContainer}>
+							<ScrollableTabView
+								onChangeTab={this._onChangeTab}
+								renderTabBar={() => (
+									<DefaultTabBar
+										textStyle={styles.textStyle}
+										underlineStyle={styles.underlineStyle}
+										style={styles.tabBar}
+									/>
+								)}>
+								<Info tabLabel="INFO" item={item} description={this.state.des} director={this.state.Directed} />
+								<Series tabLabel="SERIES" id={this.props.item.id} link={this.state.link} seasons={this.state.seasons} series={this.state.series} getTabHeight={this._getTabHeight} />
+								<Trailers tabLabel="TRAILERS" item={this.props.item} youtubeVideos={this.state.youtubeVideos} openYoutube={this._openYoutube} getTabHeight={this._getTabHeight} />
+							</ScrollableTabView>
+						</View>
 					</View>
-					<View style={styles.contentContainer}>
-						<ScrollableTabView
-							onChangeTab={this._onChangeTab}
-							renderTabBar={() => (
-								<DefaultTabBar
-									textStyle={styles.textStyle}
-									underlineStyle={styles.underlineStyle}
-									style={styles.tabBar}
-								/>
-							)}>
-							<Info tabLabel="INFO" item={item} description={this.state.des} director={this.state.Directed} />
-							<Series tabLabel="SERIES"  id={this.props.item.id} link={this.state.link} seasons={this.state.seasons} series={this.state.series} getTabHeight={this._getTabHeight} />
-							<Trailers tabLabel="TRAILERS" item={this.props.item} youtubeVideos={this.state.youtubeVideos} openYoutube={this._openYoutube} getTabHeight={this._getTabHeight} />
-						</ScrollableTabView>
-					</View>
-				</View>
-			</ScrollView>
+				</ScrollView>
 		);
 	}
 }

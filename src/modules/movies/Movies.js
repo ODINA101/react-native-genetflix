@@ -21,14 +21,14 @@ import styles from './styles/Movies';
 import { iconsMap } from '../../utils/AppIcons';
 import axios from "axios"
 import List from "./categories"
+import InAppBilling from "react-native-billing";
 
-
-// import {
-//   AdMobBanner,
-//   AdMobInterstitial,
-//   PublisherBanner,
-//   AdMobRewarded,
-// } from 'react-native-admob'
+import {
+	AdMobBanner,
+	AdMobInterstitial,
+	PublisherBanner,
+	AdMobRewarded,
+} from 'react-native-admob'
 class Movies extends Component {
 	constructor(props) {
 		super(props);
@@ -54,8 +54,9 @@ class Movies extends Component {
 
 		//alert(JSON.stringify(props))
 		//.setOnNavigatorEvent(this.onNavigatorEvent.bind(this))
-		// AdMobInterstitial.setAdUnitID('ca-app-pub-6370427711797263/7435578378');
-		// AdMobInterstitial.requestAd().then(() => AdMobInterstitial.showAd());
+		AdMobInterstitial.setAdUnitID('ca-app-pub-6370427711797263/7435578378');
+		//	this.checkSubscription()
+		//AdMobInterstitial.requestAd().then(() => AdMobInterstitial.showAd());
 		//alert(List)
 		//  this.props.navigator.setButtons({leftButtons:[{id:'sideMenu'}],rightButtons:[
 		// 	 {
@@ -94,7 +95,32 @@ class Movies extends Component {
 		if (this.navigationEventListener) {
 			this.navigationEventListener.remove();
 		}
+		setTimeout(() => {
+			this.checkSubscription()
+		}, 1000)
 	}
+
+
+	async checkSubscription() {
+		try {
+			await InAppBilling.open();
+			// If subscriptions/products are updated server-side you
+			// will have to update cache with loadOwnedPurchasesFromGoogle()
+			await InAppBilling.loadOwnedPurchasesFromGoogle();
+			const isSubscribed = await InAppBilling.isSubscribed("noads597")
+			//   alert("Customer subscribed: " + isSubscribed);
+			if (!isSubscribed) {
+				AdMobInterstitial.requestAd().then(() => AdMobInterstitial.showAd());
+			}
+
+		} catch (err) {
+			console.log(err);
+		} finally {
+			await InAppBilling.close();
+		}
+	}
+
+
 
 	componentDidMount() {
 		this.navigationEventListener = Navigation.events().bindComponent(this);
@@ -217,6 +243,16 @@ class Movies extends Component {
 		if (isRefreshed && this.setState({ isRefreshing: false }));
 	}
 
+
+
+
+
+
+
+
+
+
+
 	_viewMoviesList(type, title) {
 		// let rightButtons = [];
 		// if (Platform.OS === 'ios') {
@@ -238,37 +274,37 @@ class Movies extends Component {
 		// 	}
 		// });
 
-	Navigation.showModal({
-				stack: {
-					children: [{
-						component: {
-							name: 'movieapp.MoviesList',
-							passProps: {
-								type
-							},
-							options: {
-								topBar: {
-									height: 60,
-									background: {
-										color: "#0a0a0a",
-									},
-									title: {
-										text: title,
-										color: "#FFF"
-									},
-									leftButtons: [
-										{
-											id: 'backButton',
-											icon: iconsMap['ios-arrow-round-back'],
-											color: "#FFF"
-										}
-									],
+		Navigation.showModal({
+			stack: {
+				children: [{
+					component: {
+						name: 'movieapp.MoviesList',
+						passProps: {
+							type
+						},
+						options: {
+							topBar: {
+								height: 60,
+								background: {
+									color: "#0a0a0a",
 								},
+								title: {
+									text: title,
+									color: "#FFF"
+								},
+								leftButtons: [
+									{
+										id: 'backButton',
+										icon: iconsMap['ios-arrow-round-back'],
+										color: "#FFF"
+									}
+								],
 							},
-						}
-					}]
-				}
-			})
+						},
+					}
+				}]
+			}
+		})
 
 
 	}
@@ -343,8 +379,6 @@ class Movies extends Component {
 			})
 
 		}
-
-
 
 
 

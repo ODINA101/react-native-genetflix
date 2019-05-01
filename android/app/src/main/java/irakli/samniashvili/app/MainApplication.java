@@ -1,4 +1,5 @@
-package com.netf;
+
+package irakli.samniashvili.app;
 
 import android.app.Application;
 

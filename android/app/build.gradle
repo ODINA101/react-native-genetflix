@@ -99,12 +99,13 @@ android {
  
 
     defaultConfig {
-        applicationId "com.netf"
+        applicationId "irakli.samniashvili.app"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
          missingDimensionStrategy "RNN.reactNativeVersion", "reactNative57_5" // See note below!
-        versionCode 1
-        versionName "1.0"
+       versionCode 50270
+        versionName "80" 
+       
         multiDexEnabled true
     }
      compileOptions {
@@ -133,6 +134,7 @@ android {
         release {
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+            signingConfig signingConfigs.release
         }
     }
     // applicationVariants are e.g. debug, release
