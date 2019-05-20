@@ -12,15 +12,15 @@ import LinearGradient from 'react-native-linear-gradient';
 import { Navigation } from "react-native-navigation"
 import styles from './styles/Drawer';
 import { iconsMap } from '../../utils/AppIcons';
- import InAppBilling from "react-native-billing";
- 
- const itemSkus = Platform.select({
-  ios: [
-    'noads597'
-  ],
-  android: [
-    'noads597'
-  ]
+import InAppBilling from "react-native-billing";
+
+const itemSkus = Platform.select({
+	ios: [
+		'noads597'
+	],
+	android: [
+		'noads597'
+	]
 });
 class Drawer extends Component {
 	constructor(props) {
@@ -30,28 +30,28 @@ class Drawer extends Component {
 		this._goToFavorites = this._goToFavorites.bind(this);
 		this._openSearch = this._openSearch.bind(this);
 		this._goToSeries = this._goToSeries.bind(this);
-		  this.state = {
-			 subscribed:null,
-			 subed:false
-		 }
-		 this.checkSubscription()
+		this.state = {
+			subscribed: null,
+			subed: false
+		}
+		this.checkSubscription()
 	}
-async checkSubscription() {
-	    try {
-	    await InAppBilling.open();
-	    await InAppBilling.loadOwnedPurchasesFromGoogle();
-	    const isSubscribed = await InAppBilling.isSubscribed("noads597")
-	  //   const isSubscribed2 = await InAppBilling.getProductDetails("noads597")
-		// alert(isSubscribed2)
-	    console.log("Customer subscribed: ", isSubscribed);
-			this.setState({subscribed:true,subed:isSubscribed})
-		//alert(isSubscribed)
-	  } catch (err) {
-	  //  alert(err);
+	async checkSubscription() {
+		try {
+			await InAppBilling.open();
+			await InAppBilling.loadOwnedPurchasesFromGoogle();
+			const isSubscribed = await InAppBilling.isSubscribed("noads597")
+			//   const isSubscribed2 = await InAppBilling.getProductDetails("noads597")
+			// alert(isSubscribed2)
+			console.log("Customer subscribed: ", isSubscribed);
+			this.setState({ subscribed: true, subed: isSubscribed })
+			//alert(isSubscribed)
+		} catch (err) {
+			//  alert(err);
 			//alert(err)
-	  } finally {
-	    await InAppBilling.close();
-	  }
+		} finally {
+			await InAppBilling.close();
+		}
 	}
 
 
@@ -266,45 +266,47 @@ async checkSubscription() {
 						</TouchableOpacity>
 
 					</View>
-					
-					 {
-						this.state.subscribed?(
-							<View>
-							{
-								!this.state.subed?(
 
+					{
+						this.state.subscribed ? (
 							<View>
-							<TouchableOpacity onPress={async () => {
+								{
+									!this.state.subed ? (
 
-														InAppBilling.open()
-					  						  .then(() => InAppBilling.subscribe("noads597").then(res => {
-														alert("subedd success")
+										<View>
+											<TouchableOpacity onPress={async () => {
+
+												InAppBilling.open()
+													.then(() => InAppBilling.subscribe("noads597").then(res => {
+														if (res.purchaseState == "PurchasedSuccessfully") {
+															this.setState({ subed: true })
+														}
 													}))
-											  .then(details => {
-											     InAppBilling.close();
-											  }).catch(err => console.log(err))
-				
+													.then(details => {
+														InAppBilling.close();
+													}).catch(err => console.log(err))
 
-							}} style={{height:50,marginTop:50,width:200,borderRadius:5,justifyContent: 'center',alignItems: 'center',elevation:3,backgroundColor:"#FB7C00"}}>
-		             <Text style={{color:"#FFF",fontSize:13}}>გამოწერა 2 ლარი/თვეში</Text>
-							</TouchableOpacity>
-		             <Text style={{color:"#FFF",fontSize:13,marginTop:10,width:200,lineHeight:20,textAlign: 'center'}}>გამოიწერე და უყურე ფილმებს ყოველგვარი რეკლამის გარეშე</Text>
 
+											}} style={{ height: 50, marginTop: 50, width: 200, borderRadius: 5, justifyContent: 'center', alignItems: 'center', elevation: 3, backgroundColor: "#FB7C00" }}>
+												<Text style={{ color: "#FFF", fontSize: 13 }}>გამოწერა 2 ლარი/თვეში</Text>
+											</TouchableOpacity>
+											<Text style={{ color: "#FFF", fontSize: 13, marginTop: 10, width: 200, lineHeight: 20, textAlign: 'center' }}>გამოიწერე და უყურე ფილმებს ყოველგვარი რეკლამის გარეშე</Text>
+
+										</View>
+									) : (
+											<View>
+											</View>
+										)
+								}
 							</View>
-						):(
-             <View>
-       </View>
-						)
-							}
-							</View>
-						):(
-							<View style={{height:100,justifyContent: 'center',alignItems: 'center'}}>
-							<ActivityIndicator size="large" color="#00ff00" />
-							</View>
-						)
+						) : (
+								<View style={{ height: 100, justifyContent: 'center', alignItems: 'center' }}>
+									<ActivityIndicator size="large" color="#00ff00" />
+								</View>
+							)
 					}
 
-				
+
 				</View>
 			</LinearGradient>
 		);

@@ -4,6 +4,18 @@ package irakli.samniashvili.app;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+
+import com.facebook.CallbackManager;
+import com.facebook.FacebookSdk;
+import com.facebook.reactnative.androidsdk.FBSDKPackage;
+
+import ui.shine.RNShineButtonPackage;
+import com.reactnativecommunity.webview.RNCWebViewPackage;
+import com.brentvatne.react.ReactVideoPackage;
+import com.corbt.keepawake.KCKeepAwakePackage;
+import com.lugg.ReactNativeConfig.ReactNativeConfigPackage;
+import com.rpt.reactnativecheckpackageinstallation.CheckPackageInstallationPackage;
+import com.reactnative.googlecast.GoogleCastPackage;
 import com.wog.videoplayer.VideoPlayerPackage;
 import com.masteratul.downloadmanager.ReactNativeDownloadManagerPackage;
 import com.sbugert.rnadmob.RNAdMobPackage;
@@ -21,6 +33,12 @@ import java.util.Arrays;
 import java.util.List;
 
 public class MainApplication extends NavigationApplication {
+
+    private static CallbackManager mCallbackManager = CallbackManager.Factory.create();
+
+    protected static CallbackManager getCallbackManager() {
+        return mCallbackManager;
+    }
 
     @Override
     protected ReactGateway createReactGateway() {
@@ -41,9 +59,12 @@ public class MainApplication extends NavigationApplication {
     protected List<ReactPackage> getPackages() {
         // Add additional packages you require here
         // No need to add RnnPackage and MainReactPackage
-        return Arrays.<ReactPackage>asList(new VectorIconsPackage(), // eg. new VectorIconsPackage()
-                new ReactNativeDownloadManagerPackage(), new VideoPlayerPackage(), new LinearGradientPackage(),
-                new RNAdMobPackage(), new InAppBillingBridgePackage());
+        return Arrays.<ReactPackage>asList(new RNCWebViewPackage(), new RNShineButtonPackage(),
+                new FBSDKPackage(mCallbackManager), new VectorIconsPackage(), // eg. new VectorIconsPackage()
+                new KCKeepAwakePackage(), new ReactNativeDownloadManagerPackage(),
+                new CheckPackageInstallationPackage(), new VideoPlayerPackage(), new LinearGradientPackage(),
+                new RNAdMobPackage(), new ReactVideoPackage(), new GoogleCastPackage(),
+                new InAppBillingBridgePackage());
     }
 
     @Override
