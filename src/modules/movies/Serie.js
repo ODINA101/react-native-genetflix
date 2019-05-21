@@ -874,12 +874,21 @@ class Serie extends Component {
 																		} else if (result.isCancelled) {
 																			alert("login is cancelled.");
 																		} else {
-																			AccessToken.getCurrentAccessToken().then(
-																				(data) => {
-																					//	alert(data.accessToken.toString())
-																					this.setState({ loggedIn: true })
-																				}
-																			)
+																		 AccessToken.getCurrentAccessToken()
+																				.then((data) => {
+																					this.setState({
+																						loggedIn: true,
+																						accessToken: data.accessToken
+																					})
+																					this.fetchProfile().then((data) => {
+																						//alert(JSON.stringify(data))
+																						this.setState({ UserData: data })
+																					})
+
+																				})
+																				.catch(error => {
+																					console.log(error)
+																				})
 																		}
 																	}
 																}
@@ -925,8 +934,13 @@ class Serie extends Component {
 																</View>
 
 															</View>
-
+	{
+																this.state.loggedIn ? (
 															<Reactions userData={this.state.UserData} onChange={(type, lk) => { this.ReactLove(this.state.keys[index], lk, type) }} item={item} />
+																) : (
+																		<View />
+																	)
+															}
 
 														</View>
 

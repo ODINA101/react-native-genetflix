@@ -1007,12 +1007,21 @@ class Movie extends Component {
 																		} else if (result.isCancelled) {
 																			alert("login is cancelled.");
 																		} else {
-																			AccessToken.getCurrentAccessToken().then(
-																				(data) => {
-																					//	alert(data.accessToken.toString())
-																					this.setState({ loggedIn: true })
-																				}
-																			)
+																			AccessToken.getCurrentAccessToken()
+																				.then((data) => {
+																					this.setState({
+																						loggedIn: true,
+																						accessToken: data.accessToken
+																					})
+																					this.fetchProfile().then((data) => {
+																						//alert(JSON.stringify(data))
+																						this.setState({ UserData: data })
+																					})
+
+																				})
+																				.catch(error => {
+																					console.log(error)
+																				})
 																		}
 																	}
 																}
