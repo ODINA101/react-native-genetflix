@@ -244,7 +244,8 @@ class Serie extends Component {
 			comments: [],
 			commentTxt: "",
 			loggedIn: false,
-			UserData: {}
+			UserData: {},
+		
 		};
 
 		this.requestManager = new GraphRequestManager()
@@ -258,6 +259,9 @@ class Serie extends Component {
 		this.checkSubscription()
 		//this.props.navigator.setOnNavigatorEvent(this._onNavigatorEvent.bind(this));
 	}
+
+
+
 	async checkSubscription() {
 		try {
 			await InAppBilling.open();
@@ -874,7 +878,7 @@ class Serie extends Component {
 																		} else if (result.isCancelled) {
 																			alert("login is cancelled.");
 																		} else {
-																		 AccessToken.getCurrentAccessToken()
+																			AccessToken.getCurrentAccessToken()
 																				.then((data) => {
 																					this.setState({
 																						loggedIn: true,
@@ -934,9 +938,9 @@ class Serie extends Component {
 																</View>
 
 															</View>
-	{
+															{
 																this.state.loggedIn ? (
-															<Reactions userData={this.state.UserData} onChange={(type, lk) => { this.ReactLove(this.state.keys[index], lk, type) }} item={item} />
+																	<Reactions userData={this.state.UserData} onChange={(type, lk) => { this.ReactLove(this.state.keys[index], lk, type) }} item={item} />
 																) : (
 																		<View />
 																	)

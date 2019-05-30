@@ -12,7 +12,8 @@ export default class HomeScreen extends Component {
 
             <View style={{ flex: 1, backgroundColor: 'black' }}>
                 <StatusBar hidden={true} />
-                <VideoPlayer source={this.props.url} />
+
+                <VideoPlayer Captions={this.props.Captions} source={this.props.url} />
                 <KeepAwake />
             </View>
         )

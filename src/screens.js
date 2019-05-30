@@ -11,7 +11,7 @@ import Favorites from './modules/movies/Favorites';
 import CatMoviesList from './modules/movies/CatMoviesList';
 import ColMoviesList from './modules/movies/ColMoviesList';
 import CatCol from './modules/movies/CatCol';
-import VideoPlayer from "./modules/movies/VideoPlayer"
+import VideoPlayer from "./VideoPlayer"
 
 export function registerScreens(store, Provider) {
 	Navigation.registerComponentWithRedux('movieapp.Movie', () => Movie, Provider, store);

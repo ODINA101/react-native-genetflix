@@ -8,7 +8,7 @@ import {
 	AsyncStorage,
 	Linking
 } from 'react-native';
-import {Navigation} from "react-native-navigation";
+import { Navigation } from "react-native-navigation";
 import { convertStringToNumber } from 'convert-string-to-number'
 import styles from './styles/Casts';
 import { TMDB_IMG_URL } from '../../../constants/api';
@@ -17,7 +17,7 @@ import SwitchSelector from 'react-native-switch-selector';
 import Modal from "react-native-modal";
 import Swiper from 'react-native-swiper';
 import VideoPlayer from "react-native-native-video-player"
-
+import axios from "axios"
 import { AppInstalledChecker, CheckPackageInstallation } from 'react-native-check-app-install';
 
 
@@ -43,6 +43,13 @@ export default class Series extends Component {
 				{ label: 'მობილურის', value: 'mobiluris' },
 			],
 			selectedVideo: "shida",
+			Captions: false,
+			SubTitles_Options: [
+				{ label: 'On', value: 'on' },
+				{ label: 'Off', value: 'off' },
+			],
+			selectedCaptions: "",
+			CaptionsUrl: ""
 		}
 
 		let szns = [];
@@ -63,7 +70,22 @@ export default class Series extends Component {
 				this.setState({ RecommendedPlayerInstalled: isInstalled })
 			});
 	}
-
+	getCaptions = (id) => {
+		//	alert(parseInt(this.state.selected.substr(this.state.selected.length - 1)) - 1)
+		///alert(this.getNum(parseInt(this.state.selected.substr(this.state.selected.length - 1)) - 1))
+		//alert("http://staticnet.adjara.com/subtitles/" + this.props.id + "_" + this.getNum(parseInt(this.state.selected.substr(this.state.selected.length - 1)) - 1) +
+		//"_" + this.getNum(this.state.serieI) + "_English.vtt")
+		axios.get("http://staticnet.adjara.com/subtitles/" + this.props.id + "_" + this.getNum(parseInt(this.state.selected.substr(this.state.selected.length - 1)) - 1) +
+			"_" + this.getNum(this.state.serieI) + "_English.vtt")
+			.then(res => {
+				this.setState({
+					Captions: true, CaptionsUrl: "http://staticnet.adjara.com/subtitles/" + this.props.id + "_" + this.getNum(parseInt(this.state.selected.substr(this.state.selected.length - 1)) - 1) +
+						"_" + this.getNum(this.state.serieI) + "_English.vtt"
+				})
+			}).catch(error => {
+				this.setState({ Captions: false, CaptionsUrl: "" })
+			})
+	}
 
 	async _retrieveData() {
 		try {
@@ -92,10 +114,14 @@ export default class Series extends Component {
 	};
 
 	getNum(num) {
-		if (num < 9) {
-			return ("0" + (num + 1)).toString()
+		if (num == -1) {
+			return "10"
 		} else {
-			return (num + 1).toString();
+			if (num < 9) {
+				return ("0" + (num + 1)).toString()
+			} else {
+				return (num + 1).toString();
+			}
 		}
 	}
 	getq(data) {
@@ -140,6 +166,8 @@ export default class Series extends Component {
 			noqures.push({ label: this.getq(item), value: item })
 		})
 		this.setState({ serieI, options: nores, selectedLang: noption[0], Quality_Options: noqures, selectedQual: noquality[0] }, () => {
+
+			this.getCaptions()
 			this.setState({ ShowModal: true })
 		})
 
@@ -149,6 +177,9 @@ export default class Series extends Component {
 	}
 
 	Play() {
+		// alert("http://" + this.props.link + this.props.id + "_" + this.getNum(parseInt(this.state.selected.substr(this.state.selected.length - 1)) - 1) +
+		// 	"_" + this.getNum(this.state.serieI) + "_" + this.state.selectedLang + "_"
+		// 	+ this.state.selectedQual + ".mp4")
 
 		if (this.state.selectedVideo == "shida") {
 			Navigation.showModal({
@@ -159,7 +190,8 @@ export default class Series extends Component {
 							passProps: {
 								url: "http://" + this.props.link + this.props.id + "_" + this.getNum(parseInt(this.state.selected.substr(this.state.selected.length - 1)) - 1) +
 									"_" + this.getNum(this.state.serieI) + "_" + this.state.selectedLang + "_"
-									+ this.state.selectedQual + ".mp4"
+									+ this.state.selectedQual + ".mp4",
+								Captions: this.state.selectedCaptions == "on" ? (this.state.CaptionsUrl) : (null)
 							},
 							options: {
 								topBar: {
@@ -191,7 +223,16 @@ export default class Series extends Component {
 
 	getSeason(value) {
 		var datiko = [];
-		var sss = this.props.seasons[parseInt(value.substr(value.length - 1)) - 1];
+		let kaka = parseInt(value.substr(value.length - 1)) - 1;
+
+		if (kaka == -1) {
+			kaka = 9;
+		}
+		var sss = this.props.seasons[kaka];
+
+		if (sss == undefined) {
+
+		}
 		datiko = Object
 			.keys(sss)
 			.map(i => {
@@ -199,7 +240,11 @@ export default class Series extends Component {
 					return sss[i]
 				}
 			})
+
 		this.setState({ series: datiko, isLoading: false })
+
+
+
 	}
 	async onValueChange(value) {
 		//	alert(Number.parseInt(value[value.length-1]))
@@ -320,6 +365,16 @@ export default class Series extends Component {
 							}
 
 
+							{
+								this.state.Captions ? (
+									<View>
+										<Text style={{ color: "#FFF", paddingTop: 20, paddingBottom: 20 }}>ტიტრები</Text>
+										<SwitchSelector options={this.state.SubTitles_Options} initial={1} onPress={value => this.setState({ selectedCaptions: value })} />
+									</View>
+								) : (
+										<View />
+									)
+							}
 
 							<View style={{ marginTop: 50, flexDirection: 'row' }}>
 

@@ -256,7 +256,14 @@ class Movie extends Component {
 			RecommendedPlayerInstalled: true,
 			accessToken: '',
 			keys: [],
-			UserData: {}
+			UserData: {},
+			Captions: false,
+			SubTitles_Options: [
+				{ label: 'On', value: 'on' },
+				{ label: 'Off', value: 'off' },
+			],
+			selectedCaptions: "",
+			CaptionsUrl: "off"
 
 		};
 
@@ -269,6 +276,7 @@ class Movie extends Component {
 		this._onScroll = this._onScroll.bind(this);
 		this._viewMovie = this._viewMovie.bind(this);
 		this._openYoutube = this._openYoutube.bind(this);
+		this.getCaptions()
 		this.checkSubscription()
 		//this.props.navigator.setOnNavigatorEvent(this._onNavigatorEvent.bind(this));
 		//AdMobInterstitial.requestAd().then(() => AdMobInterstitial.showAd());
@@ -287,7 +295,14 @@ class Movie extends Component {
 
 		//Firebase
 	}
-
+	getCaptions = () => {
+		axios.get("http://staticnet.adjara.com/subtitles/" + this.props.item.id + "_English.vtt")
+			.then(res => {
+				this.setState({ Captions: true, CaptionsUrl: "http://staticnet.adjara.com/subtitles/" + this.props.item.id + "_English.vtt" })
+			}).catch(error => {
+				this.setState({ Captions: false, CaptionsUrl: "" })
+			})
+	}
 
 	postNewComment(data) {
 		if (data) {
@@ -707,7 +722,8 @@ class Movie extends Component {
 							component: {
 								name: 'movieapp.Player',
 								passProps: {
-									url: this.state.link + item.id + "_" + this.state.selectedLang + "_" + this.state.selectedQual + ".mp4"
+									url: this.state.link + item.id + "_" + this.state.selectedLang + "_" + this.state.selectedQual + ".mp4",
+									Captions: this.state.selectedCaptions == "on" ? (this.state.CaptionsUrl) : (null)
 								},
 								options: {
 									topBar: {
@@ -878,6 +894,16 @@ class Movie extends Component {
 
 									}
 
+									{
+										this.state.Captions ? (
+											<View>
+												<Text style={{ color: "#FFF", paddingTop: 20, paddingBottom: 20 }}>ტიტრები</Text>
+												<SwitchSelector options={this.state.SubTitles_Options} initial={1} onPress={value => this.setState({ selectedCaptions: value })} />
+											</View>
+										) : (
+												<View />
+											)
+									}
 
 
 
