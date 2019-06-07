@@ -1064,6 +1064,10 @@
   resolved "https://registry.yarnpkg.com/@types/yargs/-/yargs-12.0.12.tgz#45dd1d0638e8c8f153e87d296907659296873916"
   integrity sha512-SOhuU4wNBxhhTHxYaiG5NY4HBhDIDnJF60GU+2LqHAdKKer86//e4yg69aENCtQ04n0ovz+tq2YPME5t5yp4pw==
 
+"@valdio/react-native-scrollable-tabview@https://github.com/ODINA101/react-native-scrollable-tabview":
+  version "0.8.11"
+  resolved "https://github.com/ODINA101/react-native-scrollable-tabview#ee8bd5170ceacdbd6c6f9852d8e1ad155685b8b7"
+
 "@valdio/react-native-scrollable-tabview@https://github.com/valdio/react-native-scrollable-tabview":
   version "0.8.11"
   resolved "https://github.com/valdio/react-native-scrollable-tabview#bffbfe6e0410be6cdb0e65dec427c605e249a036"

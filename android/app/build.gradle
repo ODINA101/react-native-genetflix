@@ -103,8 +103,8 @@ android {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
          missingDimensionStrategy "RNN.reactNativeVersion", "reactNative57_5" // See note below!
-       versionCode 50274
-        versionName "84" 
+       versionCode 50277
+        versionName "87" 
       
         multiDexEnabled true
     }

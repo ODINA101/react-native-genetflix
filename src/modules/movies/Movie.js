@@ -46,9 +46,7 @@ let Star = <Icon family={"FontAwesome"} name={"star"} color={"#808080"} />;
 let Like = <Icon family={"FontAwesome"} name={"thumbs-up"} color={"#808080"} />;
 let Love = <Icon family={"FontAwesome"} name={"heart"} color={"#808080"} />;
 import AsyncImageAnimated from "react-native-async-image-animated"
-
 import DropdownAlert from 'react-native-dropdownalert';
-
 
 
 import InAppBilling from "react-native-billing";

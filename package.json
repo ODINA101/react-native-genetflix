@@ -8,7 +8,7 @@
   },
   "dependencies": {
     "@react-native-firebase/app": "^0.0.4",
-    "@valdio/react-native-scrollable-tabview": "https://github.com/valdio/react-native-scrollable-tabview",
+    "@valdio/react-native-scrollable-tabview": "https://github.com/ODINA101/react-native-scrollable-tabview",
     "axios": "^0.18.0",
     "convert-string-to-number": "^1.0.3",
     "firebase": "^5.11.1",

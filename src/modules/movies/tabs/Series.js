@@ -73,14 +73,14 @@ export default class Series extends Component {
 	getCaptions = (id) => {
 		//	alert(parseInt(this.state.selected.substr(this.state.selected.length - 1)) - 1)
 		///alert(this.getNum(parseInt(this.state.selected.substr(this.state.selected.length - 1)) - 1))
-		//alert("http://staticnet.adjara.com/subtitles/" + this.props.id + "_" + this.getNum(parseInt(this.state.selected.substr(this.state.selected.length - 1)) - 1) +
-		//"_" + this.getNum(this.state.serieI) + "_English.vtt")
-		axios.get("http://staticnet.adjara.com/subtitles/" + this.props.id + "_" + this.getNum(parseInt(this.state.selected.substr(this.state.selected.length - 1)) - 1) +
-			"_" + this.getNum(this.state.serieI) + "_English.vtt")
+		alert("http://staticnet.adjara.com/subtitles/" + this.props.id + "_" + this.getNum(parseInt(this.state.selected.substr(this.state.selected.length - 1)) - 1, true) +
+			"_" + this.getNum(this.state.serieI, true) + "_English.vtt")
+		axios.get("http://staticnet.adjara.com/subtitles/" + this.props.id + "_" + this.getNum(parseInt(this.state.selected.substr(this.state.selected.length - 1)) - 1, true) +
+			"_" + this.getNum(this.state.serieI, true) + "_English.vtt")
 			.then(res => {
 				this.setState({
-					Captions: true, CaptionsUrl: "http://staticnet.adjara.com/subtitles/" + this.props.id + "_" + this.getNum(parseInt(this.state.selected.substr(this.state.selected.length - 1)) - 1) +
-						"_" + this.getNum(this.state.serieI) + "_English.vtt"
+					Captions: true, CaptionsUrl: "http://staticnet.adjara.com/subtitles/" + this.props.id + "_" + this.getNum(parseInt(this.state.selected.substr(this.state.selected.length - 1)) - 1, true) +
+						"_" + this.getNum(this.state.serieI, true) + "_English.vtt"
 				})
 			}).catch(error => {
 				this.setState({ Captions: false, CaptionsUrl: "" })
@@ -113,12 +113,16 @@ export default class Series extends Component {
 		}
 	};
 
-	getNum(num) {
+	getNum(num, sub) {
 		if (num == -1) {
 			return "10"
 		} else {
 			if (num < 9) {
-				return ("0" + (num + 1)).toString()
+				if (sub) {
+					return ((num + 1)).toString()
+				} else {
+					return ("0" + (num + 1)).toString()
+				}
 			} else {
 				return (num + 1).toString();
 			}
