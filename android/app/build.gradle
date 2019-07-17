@@ -172,7 +172,6 @@ dependencies {
     implementation project(':react-native-keep-awake')
     implementation project(':react-native-config')
     implementation project(':react-native-check-app-install')
-    implementation project(':react-native-google-cast')
     implementation project(':react-native-native-video-player')
     implementation project(':react-native-simple-download-manager')
     implementation project(':react-native-admob')

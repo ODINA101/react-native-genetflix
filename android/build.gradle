@@ -57,6 +57,8 @@ subprojects { subproject ->
             }
         }
     }
+
+
 project.configurations.all {
         resolutionStrategy.eachDependency { details ->
             if (details.requested.group == 'com.android.support'
@@ -67,5 +69,4 @@ project.configurations.all {
     }
 
 }
-
  
