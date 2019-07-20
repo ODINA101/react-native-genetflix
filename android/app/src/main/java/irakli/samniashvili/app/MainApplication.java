@@ -4,6 +4,8 @@ package irakli.samniashvili.app;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import cl.json.RNSharePackage;
+import fr.greweb.reactnativeviewshot.RNViewShotPackage;
 
 //import com.facebook.CallbackManager;
 //import com.facebook.FacebookSdk;
@@ -23,6 +25,7 @@ import com.idehub.Billing.InAppBillingBridgePackage;
 import com.BV.LinearGradient.LinearGradientPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.facebook.react.ReactNativeHost;
+import cl.json.ShareApplication;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
 import com.facebook.soloader.SoLoader;
@@ -31,6 +34,8 @@ import com.reactnativenavigation.react.NavigationReactNativeHost;
 import com.reactnativenavigation.react.ReactGateway;
 import java.util.Arrays;
 import java.util.List;
+import cl.json.RNSharePackage;
+import fr.greweb.reactnativeviewshot.RNViewShotPackage;
 
 public class MainApplication extends NavigationApplication {
 
@@ -60,8 +65,9 @@ public class MainApplication extends NavigationApplication {
     protected List<ReactPackage> getPackages() {
         // Add additional packages you require here
         // No need to add RnnPackage and MainReactPackage
-        return Arrays.<ReactPackage>asList(new RNCWebViewPackage(), new RNShineButtonPackage(), new FBSDKPackage(),
-                new VectorIconsPackage(), // eg. new VectorIconsPackage()
+        return Arrays.<ReactPackage>asList(new RNSharePackage(), new RNViewShotPackage(), new RNCWebViewPackage(),
+                new RNShineButtonPackage(), new FBSDKPackage(), new VectorIconsPackage(), // eg. new
+                                                                                          // VectorIconsPackage()
                 new KCKeepAwakePackage(), new ReactNativeDownloadManagerPackage(),
                 new CheckPackageInstallationPackage(), new VideoPlayerPackage(), new LinearGradientPackage(),
                 new RNAdMobPackage(), new ReactVideoPackage(), new InAppBillingBridgePackage());

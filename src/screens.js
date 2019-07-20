@@ -10,8 +10,10 @@ import Search from './modules/movies/Search';
 import Favorites from './modules/movies/Favorites';
 import CatMoviesList from './modules/movies/CatMoviesList';
 import ColMoviesList from './modules/movies/ColMoviesList';
+import ActorMoviesList from './modules/movies/ActorMoviesList';
 import CatCol from './modules/movies/CatCol';
 import VideoPlayer from "./VideoPlayer"
+import CategoriesPage from './modules/movies/CategoriesPage'
 
 export function registerScreens(store, Provider) {
 	Navigation.registerComponentWithRedux('movieapp.Movie', () => Movie, Provider, store);
@@ -22,6 +24,10 @@ export function registerScreens(store, Provider) {
 	Navigation.registerComponentWithRedux('movieapp.Favorites', () => Favorites, Provider, store);
 	Navigation.registerComponentWithRedux('movieapp.CatMoviesList', () => CatMoviesList, Provider, store);
 	Navigation.registerComponentWithRedux('movieapp.ColMoviesList', () => ColMoviesList, Provider, store);
+	Navigation.registerComponentWithRedux('movieapp.ActorMoviesList', () => ActorMoviesList, Provider, store);
+	Navigation.registerComponentWithRedux('movieapp.CategoriesPage', () => CategoriesPage, Provider, store);
+
+
 	Navigation.registerComponentWithRedux('movieapp.CatCol', () => CatCol, store, Provider);
 	Navigation.registerComponent('movieapp.Drawer', () => Drawer);
 	Navigation.registerComponent('movieapp.Player', () => VideoPlayer);

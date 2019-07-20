@@ -8,6 +8,7 @@ import {
 	ActivityIndicator
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import LinearGradient from 'react-native-linear-gradient';
 import { Navigation } from "react-native-navigation"
 import styles from './styles/Drawer';
@@ -28,6 +29,7 @@ class Drawer extends Component {
 
 		this._goToMovies = this._goToMovies.bind(this);
 		this._goToFavorites = this._goToFavorites.bind(this);
+		this._goToCategories = this._goToCategories.bind(this);
 		this._openSearch = this._openSearch.bind(this);
 		this._goToSeries = this._goToSeries.bind(this);
 		this.state = {
@@ -219,12 +221,55 @@ class Drawer extends Component {
 
 	}
 
+	_goToCategories() {
+		// //		this._toggleDrawer();
+		// this.props.navigator.showModal({
+		// 	screen: 'movieapp.Favorites',
+		// 	title: 'Favorites'
+		// });
+		Navigation.mergeOptions(this.props.componentId, {
+			sideMenu: {
+				left: {
+					visible: false
+				}
+			}
+		});
+		Navigation.showModal({
+			stack: {
+				children: [{
+					component: {
+						name: 'movieapp.CategoriesPage',
+						options: {
+							topBar: {
+								height: 60,
+								background: {
+									color: "#0a0a0a",
+								},
+								title: {
+									text: 'კატეგორიები',
+									color: "#FFF"
+								},
+								leftButtons: [
+									{
+										id: 'backButton',
+										icon: iconsMap['ios-arrow-round-back'],
+										color: "#FFF"
+									}
+								],
+							},
+						},
+					}
+				}]
+			}
+		})
 
+	}
 	render() {
 		const iconSearch = (<Icon name="md-search" size={26} color="#9F9F9F" style={[styles.drawerListIcon, { paddingLeft: 2 }]} />);
 		const iconMovies = (<Icon name="md-film" size={26} color="#9F9F9F" style={[styles.drawerListIcon, { paddingLeft: 3 }]} />);
 		const iconFav = (<Icon name="md-heart" size={26} color="#9F9F9F" style={[styles.drawerListIcon, { paddingLeft: 3 }]} />);
 		const iconTV = (<Icon name="ios-desktop" size={26} color="#9F9F9F" style={styles.drawerListIcon} />);
+		const Categories = (<FontAwesome5 name="th-list" size={23} color="#9F9F9F" style={styles.drawerListIcon} />)
 		return (
 			<LinearGradient colors={['rgba(0, 0, 0, 0.7)', 'rgba(0,0,0, 0.9)', 'rgba(0,0,0, 1)']} style={styles.linearGradient}>
 				<View style={styles.container}>
@@ -265,6 +310,14 @@ class Drawer extends Component {
 							</View>
 						</TouchableOpacity>
 
+						<TouchableOpacity onPress={this._goToCategories}>
+							<View style={styles.drawerListItem}>
+								{Categories}
+								<Text style={styles.drawerListItemText}>
+									კატეგორიები
+								</Text>
+							</View>
+						</TouchableOpacity>
 					</View>
 
 					{

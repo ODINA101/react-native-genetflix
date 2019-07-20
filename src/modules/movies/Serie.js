@@ -1,6 +1,5 @@
 import React, { Component, PropTypes } from 'react';
 import {
-	Image,
 	Linking,
 	RefreshControl,
 	ScrollView,
@@ -27,8 +26,10 @@ import ProgressBar from '../_global/ProgressBar';
 import Trailers from './tabs/Trailers';
 import styles from './styles/Movie';
 import VideoPlayer from "react-native-native-video-player"
+import { Image } from 'react-native-elements'
 import { TMDB_IMG_URL, YOUTUBE_API_KEY, YOUTUBE_URL } from '../../constants/api';
 import InAppBilling from "react-native-billing";
+import Touchable from "react-native-platform-touchable"
 import {
 	AdMobBanner,
 	AdMobInterstitial,
@@ -49,7 +50,8 @@ import AsyncImageAnimated from "react-native-async-image-animated"
 import { Sae, Isao } from 'react-native-textinput-effects';
 import { db } from '../../config';
 import DropdownAlert from 'react-native-dropdownalert';
-
+import ViewShot from "react-native-view-shot";
+import Share from 'react-native-share';
 
 var seasons = [];
 var szn = [];
@@ -166,6 +168,13 @@ class Reactions extends Component {
 						) : (<View style={{ marginLeft: 8 }} />)
 					}
 				</View>
+				<View style={{ justifyContent: 'center' }}>
+					<Touchable onPress={() => {
+						this.props.screenshot()
+					}}>
+						<Icon name="md-share" size={24} style={{ marginBottom: 10 }} color="#9E6D9A" />
+					</Touchable>
+				</View>
 			</View>
 		)
 	}
@@ -188,7 +197,7 @@ class GetPhoto extends Component {
 		return (<View>
 			{
 				this.state.loaded ? (
-					<AsyncImageAnimated
+					<Image
 						source={{
 							uri: this.state.url
 						}}
@@ -245,7 +254,7 @@ class Serie extends Component {
 			commentTxt: "",
 			loggedIn: false,
 			UserData: {},
-		
+
 		};
 
 		this.requestManager = new GraphRequestManager()
@@ -914,7 +923,8 @@ class Serie extends Component {
 										{
 											this.state.comments.map((item, index) => {
 												return (
-													<View>
+
+													<ViewShot ref={"viko" + index} options={{ format: "jpg", quality: 0.9 }}>
 														<View>
 															<View style={{ flexDirection: 'row', marginTop: 50 }}>
 																<View style={{ width: 60, paddingLeft: 8 }}>
@@ -940,7 +950,18 @@ class Serie extends Component {
 															</View>
 															{
 																this.state.loggedIn ? (
-																	<Reactions userData={this.state.UserData} onChange={(type, lk) => { this.ReactLove(this.state.keys[index], lk, type) }} item={item} />
+																	<Reactions
+																		screenshot={() => {
+																			this.refs["viko" + index].capture().then(uri => {
+																				const shareOptions = {
+																					title: 'Share via',
+																					url: uri,
+																				};
+																				Share.open(shareOptions);
+																			});
+
+																		}}
+																		userData={this.state.UserData} onChange={(type, lk) => { this.ReactLove(this.state.keys[index], lk, type) }} item={item} />
 																) : (
 																		<View />
 																	)
@@ -950,7 +971,7 @@ class Serie extends Component {
 
 
 														<View style={{ height: 0.5, marginTop: 28, backgroundColor: "#FFF" }}></View>
-													</View>
+													</ViewShot>
 
 
 												)

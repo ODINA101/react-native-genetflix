@@ -35,7 +35,11 @@ class Favorites extends Component {
 
 	componentWillMount() {
 		this._retrieveMoviesList();
+
+
 	}
+
+
 
 	async _retrieveMoviesList(isRefreshed) {
 

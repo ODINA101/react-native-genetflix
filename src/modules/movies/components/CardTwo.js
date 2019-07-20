@@ -1,26 +1,28 @@
 import React, { PropTypes } from 'react';
 import {
-	Image,
+	//Image,
 	Text,
 	TouchableOpacity,
-	View
+	View,
+	ActivityIndicator,
 } from 'react-native';
 
+import { Image } from 'react-native-elements';
 import styles from './styles/CardTwo';
 import { TMDB_IMG_URL } from '../../../constants/api';
 function checkTitle(data) {
-		 if (data.title_ge !== "") {
-				 return (data.title_ge);
-		 } else {
-				 return (data.title_en);
-		 }
- }
+	if (data.title_ge !== "") {
+		return (data.title_ge);
+	} else {
+		return (data.title_en);
+	}
+}
 
 
 const CardTwo = ({ info, viewMovie }) => (
-	<TouchableOpacity activeOpacity={0.8} onPress={viewMovie.bind(this, info.id,info)}>
+	<TouchableOpacity activeOpacity={0.8} onPress={viewMovie.bind(this, info.id, info)}>
 		<View style={styles.cardContainer}>
-			<Image source={{ uri:info.poster }} style={styles.cardImage} />
+			<Image PlaceholderContent={<ActivityIndicator />} source={{ uri: info.poster }} style={styles.cardImage} />
 			<View style={styles.cardTitleContainer}>
 				<Text style={styles.cardTitle} numberOfLines={2}>
 					{checkTitle(info)}

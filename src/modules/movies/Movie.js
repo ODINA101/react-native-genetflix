@@ -1,6 +1,5 @@
 import React, { Component, PropTypes } from 'react';
 import {
-	Image,
 	Linking,
 	RefreshControl,
 	ScrollView,
@@ -47,9 +46,10 @@ let Like = <Icon family={"FontAwesome"} name={"thumbs-up"} color={"#808080"} />;
 let Love = <Icon family={"FontAwesome"} name={"heart"} color={"#808080"} />;
 import AsyncImageAnimated from "react-native-async-image-animated"
 import DropdownAlert from 'react-native-dropdownalert';
-
-
+import ViewShot from "react-native-view-shot";
+import Share from 'react-native-share';
 import InAppBilling from "react-native-billing";
+import {Image} from "react-native-elements"
 import {
 	AdMobBanner,
 	AdMobInterstitial,
@@ -168,6 +168,13 @@ class Reactions extends Component {
 						) : (<View style={{ marginLeft: 8 }} />)
 					}
 				</View>
+				<View style={{ justifyContent: 'center' }}>
+					<Touchable onPress={() => {
+						this.props.screenshot()
+					}}>
+						<Icon name="md-share" size={24} style={{ marginBottom: 10 }} color="#9E6D9A" />
+					</Touchable>
+				</View>
 			</View>
 		)
 	}
@@ -190,7 +197,7 @@ class GetPhoto extends Component {
 		return (<View>
 			{
 				this.state.loaded ? (
-					<AsyncImageAnimated
+					<Image
 						source={{
 							uri: this.state.url
 						}}
@@ -206,7 +213,7 @@ class GetPhoto extends Component {
 
 	}
 }
-
+var _this;
 class Movie extends Component {
 	static navigatorStyle = {
 		drawUnderNavBar: true,
@@ -265,7 +272,7 @@ class Movie extends Component {
 
 		};
 
-
+		_this = this;
 		this.requestManager = new GraphRequestManager()
 		this._getTabHeight = this._getTabHeight.bind(this);
 		this._onChangeTab = this._onChangeTab.bind(this);
@@ -287,9 +294,6 @@ class Movie extends Component {
 		this.postNewComment = this.postNewComment.bind(this)
 
 		//Firebase
-
-
-
 
 		//Firebase
 	}
@@ -406,27 +410,15 @@ class Movie extends Component {
 								}
 							});
 
-
-
-
-
-
-
-
 							this.setState({ addedToFavorites: true, AsyncStorageData: parsedVal })
 						}
 					})
-
-
 				}
 			} catch (error) {
 				// Error retrieving data
 				alert(error)
 			}
-
-
 		})()
-
 
 
 
@@ -614,14 +606,20 @@ class Movie extends Component {
 				} else {
 					added = []
 				}
-
+				//alert(this.props.item.poster)
+				let poster = "";
+				if (this.props.searching) {
+					poster = ("http://staticnet.adjara.com/moviecontent/" + this.props.item.id + "/covers/214x321-" + this.props.item.id + ".jpg")
+				} else {
+					poster = this.props.item.poster
+				}
 				added.push({
 					id: this.props.item.id,
 					release_date: this.props.item.release_date,
 					director: this.props.item.director,
 					description: this.props.item.description,
 					casts: this.state.actors,
-					poster: this.props.item.poster,
+					poster,
 					data_rating: this.props.item.data_rating,
 					imdb: this.checkImdb(this.props.item),
 					title_ge: this.props.item.title_ge,
@@ -1067,24 +1065,12 @@ class Movie extends Component {
 										{
 											this.state.comments.map((item, index) => {
 												return (
-													<View>
+													<ViewShot ref={"viko" + index} options={{ format: "jpg", quality: 0.9 }}>
 														<View>
 															<View style={{ flexDirection: 'row', marginTop: 50 }}>
 																<View style={{ width: 60, paddingLeft: 8 }}>
-																	{/* <Image style={{ width: 50, height: 50, borderRadius: 25, marginTop: 0 }} source={{ uri: this.getPhoto((item.avatar + "&redirect=false")) }} /> */}
-																	{/* <AsyncImageAnimated
-																	source={{
-																		uri: 'https://i.imgur.com/R5TraVR.p'
-																	}}
-																	placeholderColor={'#cfd8dc'}
-																	style={{
-																		width: 50, height: 50, borderRadius: 25, marginTop: 0
-																	}}
-																/> */}
-
 																	<GetPhoto url={item.user.avatar} />
 																</View>
-
 																<View style={{ flex: 1, paddingLeft: 8 }}>
 																	<Text style={{ color: "#FFF", fontWeight: 'bold' }}>{item.user.name}</Text>
 																	<Text style={{ color: "#FFF", lineHeight: 20 }}>{item.msg}</Text>
@@ -1093,19 +1079,24 @@ class Movie extends Component {
 															</View>
 															{
 																this.state.loggedIn ? (
-																	<Reactions userData={this.state.UserData} onChange={(type, lk) => { this.ReactLove(this.state.keys[index], lk, type) }} item={item} />
+																	<Reactions screenshot={() => {
+																		this.refs["viko" + index].capture().then(uri => {
+																			const shareOptions = {
+																				title: 'Share via',
+																				url: uri,
+																			};
+																			Share.open(shareOptions);
+																		});
+
+																	}} userData={this.state.UserData} onChange={(type, lk) => { this.ReactLove(this.state.keys[index], lk, type) }} item={item} />
 																) : (
 																		<View />
 																	)
 															}
 
 														</View>
-
-
 														<View style={{ height: 0.5, marginTop: 28, backgroundColor: "#FFF" }}></View>
-													</View>
-
-
+													</ViewShot>
 												)
 											})
 										}

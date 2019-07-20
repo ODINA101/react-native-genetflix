@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
 		color: '#636363',
 		fontSize: 13,
 		marginTop: 5,
-		lineHeight:20
+		lineHeight: 23
 	},
 	cardNumbers: {
 		flexDirection: 'row',

@@ -570,7 +570,7 @@ class Movies extends Component {
 							}
 						</ScrollView>
 
-						<View style={styles.listHeading}>
+						{/* <View style={styles.listHeading}>
 							<Text style={styles.listHeadingLeft}>კოლექციები</Text>
 						</View>
 						<ScrollView horizontal showsHorizontalScrollIndicator={false}>
@@ -581,7 +581,7 @@ class Movies extends Component {
 									)
 								})
 							}
-						</ScrollView>
+						</ScrollView> */}
 
 
 						<View style={styles.listHeading}>
