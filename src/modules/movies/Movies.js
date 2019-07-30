@@ -7,6 +7,7 @@ import {
 	View,
 	Platform
 } from 'react-native';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Swiper from 'react-native-swiper';
 import { bindActionCreators } from 'redux';
@@ -29,6 +30,10 @@ import {
 	PublisherBanner,
 	AdMobRewarded,
 } from 'react-native-admob'
+
+var qrrIcon;
+MaterialCommunityIcons.getImageSource('qrcode-scan', 28, '#F5002A').then((source) => { qrrIcon = source });
+
 class Movies extends Component {
 	constructor(props) {
 		super(props);
@@ -82,7 +87,15 @@ class Movies extends Component {
 					title: 'Search',
 					icon: iconsMap['ios-search'],
 					color: "#FFF"
-				}]
+				},
+
+				{
+					id: 'qr',
+					title: 'qrr',
+					icon: qrrIcon,
+					color: "#FFF"
+				},
+				]
 			}
 		});
 
@@ -144,13 +157,23 @@ class Movies extends Component {
 					leftButtons: [
 						{ enabled: true, id: 'sideMenu', icon: iconsMap['ios-menu'], color: "#FFF" }
 					],
-					rightButtons: [{
-						enabled: true,
-						id: 'Search',
-						title: 'Search',
-						icon: iconsMap['ios-search'],
-						color: "#FFF"
-					}]
+					rightButtons: [
+						{
+							enabled: true,
+							id: 'Search',
+							title: 'Search',
+							icon: iconsMap['ios-search'],
+							color: "#FFF"
+						},
+						{
+
+							enabled: true,
+							id: 'qr',
+							title: 'qrr',
+							icon: qrrIcon,
+							color: "#FFF"
+						},
+					]
 				}
 			});
 		}
@@ -159,6 +182,10 @@ class Movies extends Component {
 
 		if (buttonId == "Search") {
 			this.openSearch()
+		}
+
+		if (buttonId == "qr") {
+			this.openQr()
 		}
 	}
 
@@ -184,6 +211,40 @@ class Movies extends Component {
 								},
 								title: {
 									text: 'ძიება',
+									color: "#FFF"
+								},
+								leftButtons: [
+									{
+										id: 'backButton',
+										icon: iconsMap['ios-arrow-round-back'],
+										color: "#FFF"
+									}],
+							}
+						}
+					}
+				}]
+			}
+		});
+
+	}
+
+	openQr() {
+		Navigation.showModal({
+			stack: {
+				children: [{
+					component: {
+						name: 'movieapp.QrCodeScan',
+						passProps: {
+							text: 'stack with one child'
+						},
+						options: {
+							topBar: {
+								height: 60,
+								background: {
+									color: "#0a0a0a",
+								},
+								title: {
+									text: 'QR კოდის წაკითხვა',
 									color: "#FFF"
 								},
 								leftButtons: [
@@ -533,17 +594,7 @@ class Movies extends Component {
 			this.state.isLoading ? <View style={styles.progressBar}><ProgressBar /></View> :
 				<ScrollView
 					style={[styles.container]}
-					refreshControl={
-						<RefreshControl
-							refreshing={this.state.isRefreshing}
-							onRefresh={this._onRefresh}
-							colors={['#EA0000']}
-							tintColor="white"
-							title="loading..."
-							titleColor="white"
-							progressBackgroundColor="white"
-						/>
-					}>
+				>
 					<Swiper
 						style={{ marginTop: 60 }}
 						autoplay

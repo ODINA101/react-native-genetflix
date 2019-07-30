@@ -9,8 +9,10 @@ import {
 	TouchableOpacity,
 	Dimensions
 } from 'react-native';
+import jwt from "react-native-pure-jwt";
 import Touchable from "react-native-platform-touchable"
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Sae, Isao } from 'react-native-textinput-effects';
 import { AsyncStorage } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -49,7 +51,10 @@ import DropdownAlert from 'react-native-dropdownalert';
 import ViewShot from "react-native-view-shot";
 import Share from 'react-native-share';
 import InAppBilling from "react-native-billing";
-import {Image} from "react-native-elements"
+import { Image } from "react-native-elements"
+import base64 from "react-native-base64";
+//import QRCode from 'react-native-qrcode';
+import QRCode from 'react-native-qrcode-svg';
 import {
 	AdMobBanner,
 	AdMobInterstitial,
@@ -58,6 +63,10 @@ import {
 } from 'react-native-admob'
 const apiKey = '9d2bff12ed955c7f1f74b83187f188ae'
 import Modal from "react-native-modal";
+import SimpleCrypto from "simple-crypto-js";
+
+
+
 class Reactions extends Component {
 	constructor(props) {
 		super(props);
@@ -239,6 +248,7 @@ class Movie extends Component {
 			link: "",
 			commentTxt: "",
 			ShowModal: false,
+			ShowQrModal: false,
 			loggedIn: false,
 			QOptions: [
 				{ label: 'ქართული', value: '1' },
@@ -268,10 +278,10 @@ class Movie extends Component {
 				{ label: 'Off', value: 'off' },
 			],
 			selectedCaptions: "",
-			CaptionsUrl: "off"
+			CaptionsUrl: "off",
+			Qrtoken: ''
 
 		};
-
 		_this = this;
 		this.requestManager = new GraphRequestManager()
 		this._getTabHeight = this._getTabHeight.bind(this);
@@ -285,14 +295,12 @@ class Movie extends Component {
 		this.checkSubscription()
 		//this.props.navigator.setOnNavigatorEvent(this._onNavigatorEvent.bind(this));
 		//AdMobInterstitial.requestAd().then(() => AdMobInterstitial.showAd());
-
 		AppInstalledChecker
 			.checkPackageName('com.mxtech.videoplayer.ad')
 			.then((isInstalled) => {
 				this.setState({ RecommendedPlayerInstalled: isInstalled })
 			});
 		this.postNewComment = this.postNewComment.bind(this)
-
 		//Firebase
 
 		//Firebase
@@ -469,8 +477,53 @@ class Movie extends Component {
 						this.setState({ isLoading: false });
 
 
+						let added = [];
+						let poster = "";
+						if (this.props.searching) {
+							poster = ("http://staticnet.adjara.com/moviecontent/" + this.props.item.id + "/covers/214x321-" + this.props.item.id + ".jpg")
+						} else {
+							poster = this.props.item.poster
+						}
+						added.push({
+							id: this.props.item.id,
+							release_date: this.props.item.release_date,
+							director: this.props.item.director,
+							description: this.props.item.description,
+							casts: this.state.actors,
+							poster,
+							data_rating: this.props.item.data_rating,
+							imdb: this.checkImdb(this.props.item),
+							title_ge: this.props.item.title_ge,
+							title_en: this.props.item.title_en
+						});
+						var _secretKey = "q2";
+						var simpleCrypto = new SimpleCrypto(_secretKey);
+						var chiperText = simpleCrypto.encrypt(JSON.stringify({
+							id: this.props.item.id,
+							title_ge: this.props.item.title_ge,
+							title_en: this.props.item.title_en
+						}));
+						const rawdata = chiperText;
 
+						//					alert(rawdata)
 
+						this.setState({ Qrtoken: rawdata })
+						// jwt
+						// 	.sign(
+						// 		{
+						// 			iss: "iraklisamniashviliii@gmail.com",
+						// 			exp: new Date().getTime() + 3600 * 1000, // 
+						// 			additional: JSON.stringify(added)
+						// 		}, // body
+						// 		"chatlaxi-bu", // secret
+						// 		{
+						// 			alg: "HS256"
+						// 		}
+						// 	)
+						// 	.then(data => {
+						// 		this.setState({ Qrtoken: data })
+						// 	}) // token as the only argument
+						// 	.catch((err) => console.error(err)); // possible errors
 
 					});
 
@@ -521,12 +574,14 @@ class Movie extends Component {
 	// ScrollView onContentSizeChange prop
 	_onContentSizeChange(width, height) {
 		if (this.state.tab === 0 && this.state.infoTabHeight === this.state.castsTabHeight) {
-			this.setState({ infoTabHeight: height });
+			//alert(height)
+			//this.setState({ infoTabHeight: height });
 		}
 	}
 
 	_getTabHeight(tabName, height) {
 		if (tabName === 'casts') this.setState({ castsTabHeight: height });
+		if (tabName === 'INFO') this.setState({ infoTabHeight: height });
 		if (tabName === 'trailers') this.setState({ trailersTabHeight: height });
 	}
 
@@ -837,17 +892,52 @@ class Movie extends Component {
 						onScroll={this._onScroll.bind(this)}
 						scrollEventThrottle={100}
 						onContentSizeChange={this._onContentSizeChange}
-						refreshControl={
-							<RefreshControl
-								refreshing={this.state.isRefreshing}
-								onRefresh={this._onRefresh}
-								colors={['#EA0000']}
-								tintColor="white"
-								title="loading..."
-								titleColor="white"
-								progressBackgroundColor="white"
-							/>
-						}>
+					>
+						<Modal animationIn="bounceInLeft"
+							animationOut="bounceOutRight"
+							animationInTiming={1000}
+							animationOutTiming={1000}
+							backdropTransitionInTiming={1000}
+							backdropTransitionOutTiming={1000}
+							isVisible={this.state.ShowQrModal}>
+							<View style={{
+								flex: 1,
+								flexDirection: 'column',
+								justifyContent: 'center',
+								alignItems: 'center'
+							}}>
+								<View style={{
+									backgroundColor: "#2B2C3D",
+									width: 400,
+									height: 415,
+									alignItems: 'center',
+									padding: 15
+								}}>
+									<View style={{ overflow: 'hidden' }}>
+										{
+											this.state.Qrtoken ? (
+												<View style={{ backgroundColor: "#FFF", padding: 10 }}>
+													<QRCode
+														color="black"
+														backgroundColor='#FFF'
+														value={this.state.Qrtoken}
+														size={320} />
+												</View>
+											) : (<View />)
+
+										}
+
+
+									</View>
+
+									<TouchableOpacity onPress={() => this.setState({ ShowQrModal: false })} style={{ marginTop: 15, height: 30, width: 110, backgroundColor: "#2B2C3D", borderRadius: 25, justifyContent: 'center', alignItems: 'center' }}>
+										<Text style={{ color: "#FFF" }}>დახურვა</Text>
+									</TouchableOpacity>
+								</View>
+
+							</View>
+
+						</Modal>
 						<Modal animationIn="bounceInLeft"
 							animationOut="bounceOutRight"
 							animationInTiming={1000}
@@ -944,7 +1034,11 @@ class Movie extends Component {
 										<Icon size={50} color="#FFF" name="md-download" />
 									</TouchableOpacity>
 
-
+									<TouchableOpacity style={{ width: 50, height: 50 }} onPress={() => {
+										this.setState({ ShowQrModal: true })
+									}} >
+										<MaterialCommunityIcons size={50} color="#FFF" name="qrcode" />
+									</TouchableOpacity>
 								</View>
 
 

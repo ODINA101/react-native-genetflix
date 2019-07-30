@@ -105,7 +105,7 @@ android {
          missingDimensionStrategy "RNN.reactNativeVersion", "reactNative57_5" // See note below!
        versionCode 50279
         versionName "89" 
-      
+          missingDimensionStrategy 'react-native-camera',  'general'
         multiDexEnabled true
     }
      compileOptions {
@@ -165,6 +165,11 @@ configurations.all {
 }
 
 dependencies {
+    implementation project(':@klarna_react-native-zlib')
+    implementation project(':react-native-svg')
+    implementation project(':react-native-pure-jwt')
+    implementation project(':react-native-qr-scanner')
+    implementation project(':react-native-camera')
     implementation project(':react-native-share')
     implementation project(':react-native-view-shot')
     implementation project(':react-native-fbsdk')

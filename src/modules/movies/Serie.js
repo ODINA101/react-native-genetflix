@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import LinearGradient from 'react-native-linear-gradient';
 import { ScrollableTabView, DefaultTabBar } from '@valdio/react-native-scrollable-tabview'
 import Swiper from 'react-native-swiper';
@@ -52,6 +53,8 @@ import { db } from '../../config';
 import DropdownAlert from 'react-native-dropdownalert';
 import ViewShot from "react-native-view-shot";
 import Share from 'react-native-share';
+import SimpleCrypto from "simple-crypto-js";
+import QRCode from 'react-native-qrcode-svg';
 
 var seasons = [];
 var szn = [];
@@ -254,6 +257,8 @@ class Serie extends Component {
 			commentTxt: "",
 			loggedIn: false,
 			UserData: {},
+			Qrtoken: '',
+			ShowQrModal: false,
 
 		};
 
@@ -319,6 +324,19 @@ class Serie extends Component {
 
 
 		(async () => {
+
+			var _secretKey = "q2";
+			var simpleCrypto = new SimpleCrypto(_secretKey);
+			var chiperText = simpleCrypto.encrypt(JSON.stringify({
+				id: this.props.item.id,
+				title_ge: this.props.item.title_ge,
+				title_en: this.props.item.title_en
+			}));
+			const rawdata = chiperText;
+
+			//					alert(rawdata)
+
+			this.setState({ Qrtoken: rawdata })
 
 
 			try {
@@ -474,13 +492,15 @@ class Serie extends Component {
 	// ScrollView onContentSizeChange prop
 	_onContentSizeChange(width, height) {
 		if (this.state.tab === 0 && this.state.infoTabHeight === this.state.castsTabHeight) {
-			this.setState({ infoTabHeight: height });
+			//this.setState({ infoTabHeight: height });
 		}
+		//this.setState({ castsTabHeight: height });
 	}
 
 	_getTabHeight(tabName, height) {
-		if (tabName === 'casts') this.setState({ castsTabHeight: height });
+		if (tabName === 'series') this.setState({ castsTabHeight: height });
 		if (tabName === 'trailers') this.setState({ trailersTabHeight: height });
+		if (tabName === 'INFO') this.setState({ infoTabHeight: height });
 	}
 
 	_retrieveYoutubeDetails() {
@@ -610,6 +630,9 @@ class Serie extends Component {
 
 				})
 				added = JSON.stringify(added)
+
+
+
 
 				this._storeData("favorites", added)
 
@@ -748,18 +771,53 @@ class Serie extends Component {
 						onScroll={this._onScroll.bind(this)}
 						scrollEventThrottle={100}
 						onContentSizeChange={this._onContentSizeChange}
-						refreshControl={
-							<RefreshControl
-								refreshing={this.state.isRefreshing}
-								onRefresh={this._onRefresh}
-								colors={['#EA0000']}
-								tintColor="white"
-								title="loading..."
-								titleColor="white"
-								progressBackgroundColor="white"
-							/>
-						}>
+					>
 
+						<Modal animationIn="bounceInLeft"
+							animationOut="bounceOutRight"
+							animationInTiming={1000}
+							animationOutTiming={1000}
+							backdropTransitionInTiming={1000}
+							backdropTransitionOutTiming={1000}
+							isVisible={this.state.ShowQrModal}>
+							<View style={{
+								flex: 1,
+								flexDirection: 'column',
+								justifyContent: 'center',
+								alignItems: 'center'
+							}}>
+								<View style={{
+									backgroundColor: "#2B2C3D",
+									width: 400,
+									height: 415,
+									alignItems: 'center',
+									padding: 15
+								}}>
+									<View style={{ overflow: 'hidden' }}>
+										{
+											this.state.Qrtoken ? (
+												<View style={{ backgroundColor: "#FFF", padding: 10 }}>
+													<QRCode
+														color="black"
+														backgroundColor='#FFF'
+														value={this.state.Qrtoken}
+														size={320} />
+												</View>
+											) : (<View />)
+
+										}
+
+
+									</View>
+
+									<TouchableOpacity onPress={() => this.setState({ ShowQrModal: false })} style={{ marginTop: 15, height: 30, width: 110, backgroundColor: "#2B2C3D", borderRadius: 25, justifyContent: 'center', alignItems: 'center' }}>
+										<Text style={{ color: "#FFF" }}>დახურვა</Text>
+									</TouchableOpacity>
+								</View>
+
+							</View>
+
+						</Modal>
 						<Modal animationIn="bounceInLeft"
 							animationOut="bounceOutRight"
 							animationInTiming={1000}
@@ -811,8 +869,14 @@ class Serie extends Component {
 						<View style={{ height }}>
 							<View>
 								<Image blurRadius={2} source={{ uri: item.poster ? (item.poster) : ("http://staticnet.adjara.com/moviecontent/" + item.id + "/covers/214x321-" + item.id + ".jpg") }} style={styles.imageBackdrop} />
-
 								<LinearGradient colors={['rgba(0, 0, 0, 0.2)', 'rgba(0,0,0, 0.2)', 'rgba(0,0,0, 0.7)']} style={styles.linearGradient} />
+								<View style={{ position: 'absolute', top: 100, alignSelf: 'center', flexDirection: 'row' }}>
+									<TouchableOpacity style={{ width: 50, height: 50 }} onPress={() => {
+										this.setState({ ShowQrModal: true })
+									}} >
+										<MaterialCommunityIcons size={50} color="#FFF" name="qrcode" />
+									</TouchableOpacity>
+								</View>
 							</View>
 
 							<View style={styles.cardContainer}>

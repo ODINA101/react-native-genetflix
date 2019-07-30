@@ -73,8 +73,8 @@ export default class Series extends Component {
 	getCaptions = (id) => {
 		//	alert(parseInt(this.state.selected.substr(this.state.selected.length - 1)) - 1)
 		///alert(this.getNum(parseInt(this.state.selected.substr(this.state.selected.length - 1)) - 1))
-	//	alert("http://staticnet.adjara.com/subtitles/" + this.props.id + "_" + this.getNum(parseInt(this.state.selected.substr(this.state.selected.length - 1)) - 1, true) +
-			//"_" + this.getNum(this.state.serieI, true) + "_English.vtt")
+		//	alert("http://staticnet.adjara.com/subtitles/" + this.props.id + "_" + this.getNum(parseInt(this.state.selected.substr(this.state.selected.length - 1)) - 1, true) +
+		//"_" + this.getNum(this.state.serieI, true) + "_English.vtt")
 		axios.get("http://staticnet.adjara.com/subtitles/" + this.props.id + "_" + this.getNum(parseInt(this.state.selected.substr(this.state.selected.length - 1)) - 1, true) +
 			"_" + this.getNum(this.state.serieI, true) + "_English.vtt")
 			.then(res => {
@@ -281,8 +281,10 @@ export default class Series extends Component {
 	}
 
 	render() {
+
+
 		let computedHeight = (80 + 15) * this.props.series.length; // (castImage.height + castContainer.marginBottom)
-		computedHeight += 447 + 40; // Header height + container ((20 paddingVertical) = 40)
+		//computedHeight += 447 + 40; // Header height + container ((20 paddingVertical) = 40)
 		return (
 			<View style={styles.container} onLayout={this.props.getTabHeight.bind(this, 'series', computedHeight)}>
 				<Dropdown

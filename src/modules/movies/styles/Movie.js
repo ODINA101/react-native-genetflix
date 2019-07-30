@@ -65,7 +65,7 @@ const styles = StyleSheet.create({
 		fontSize: 19,
 		fontWeight: '500',
 		paddingTop: 10,
-		lineHeight:20
+		lineHeight: 20
 	},
 	cardTagline: {
 		color: 'white',
@@ -73,7 +73,9 @@ const styles = StyleSheet.create({
 		flexWrap: 'wrap'
 	},
 	cardGenre: {
-		flexDirection: 'row'
+		flexDirection: 'row',
+		flexWrap: 'wrap'
+
 	},
 	cardGenreItem: {
 		textAlign: 'left',

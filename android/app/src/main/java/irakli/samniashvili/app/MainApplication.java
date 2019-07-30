@@ -4,20 +4,26 @@ package irakli.samniashvili.app;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.klarna.reactnative.zlib.RNReactNativeZlibPackage;
+import com.horcrux.svg.SvgPackage;
+import com.zaguiini.RNPureJwt.RNPureJwtPackage;
+import com.lewin.qrcode.QRScanReaderPackage;
+import org.reactnative.camera.RNCameraPackage;
 import cl.json.RNSharePackage;
 import fr.greweb.reactnativeviewshot.RNViewShotPackage;
 
 //import com.facebook.CallbackManager;
 //import com.facebook.FacebookSdk;
 import com.facebook.reactnative.androidsdk.FBSDKPackage;
-
+import com.zaguiini.RNPureJwt.RNPureJwtPackage;
+ import com.horcrux.svg.SvgPackage;
 import ui.shine.RNShineButtonPackage;
 import com.reactnativecommunity.webview.RNCWebViewPackage;
 import com.brentvatne.react.ReactVideoPackage;
 import com.corbt.keepawake.KCKeepAwakePackage;
 import com.lugg.ReactNativeConfig.ReactNativeConfigPackage;
 import com.rpt.reactnativecheckpackageinstallation.CheckPackageInstallationPackage;
-
+import com.lewin.qrcode.QRScanReaderPackage;
 import com.wog.videoplayer.VideoPlayerPackage;
 import com.masteratul.downloadmanager.ReactNativeDownloadManagerPackage;
 import com.sbugert.rnadmob.RNAdMobPackage;
@@ -36,7 +42,7 @@ import java.util.Arrays;
 import java.util.List;
 import cl.json.RNSharePackage;
 import fr.greweb.reactnativeviewshot.RNViewShotPackage;
-
+import com.klarna.reactnative.zlib.RNReactNativeZlibPackage;
 public class MainApplication extends NavigationApplication {
 
     // private static CallbackManager mCallbackManager =
@@ -65,12 +71,13 @@ public class MainApplication extends NavigationApplication {
     protected List<ReactPackage> getPackages() {
         // Add additional packages you require here
         // No need to add RnnPackage and MainReactPackage
-        return Arrays.<ReactPackage>asList(new RNSharePackage(), new RNViewShotPackage(), new RNCWebViewPackage(),
-                new RNShineButtonPackage(), new FBSDKPackage(), new VectorIconsPackage(), // eg. new
-                                                                                          // VectorIconsPackage()
+        return Arrays.<ReactPackage>asList(new RNSharePackage(), new RNViewShotPackage(),
+         new RNPureJwtPackage(), new RNCWebViewPackage(), new SvgPackage(),
+                new RNShineButtonPackage(), new RNCameraPackage(), new FBSDKPackage(), new VectorIconsPackage(), // eg. new
+                                                             new QRScanReaderPackage(),                                 // VectorIconsPackage()
                 new KCKeepAwakePackage(), new ReactNativeDownloadManagerPackage(),
                 new CheckPackageInstallationPackage(), new VideoPlayerPackage(), new LinearGradientPackage(),
-                new RNAdMobPackage(), new ReactVideoPackage(), new InAppBillingBridgePackage());
+                new RNAdMobPackage(), new ReactVideoPackage(), new InAppBillingBridgePackage(),new RNReactNativeZlibPackage());
     }
 
     @Override
