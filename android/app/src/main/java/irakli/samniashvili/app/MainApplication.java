@@ -43,6 +43,8 @@ import java.util.List;
 import cl.json.RNSharePackage;
 import fr.greweb.reactnativeviewshot.RNViewShotPackage;
 import com.klarna.reactnative.zlib.RNReactNativeZlibPackage;
+import androidx.multidex.MultiDex;
+import android.content.Context;
 public class MainApplication extends NavigationApplication {
 
     // private static CallbackManager mCallbackManager =
@@ -51,6 +53,15 @@ public class MainApplication extends NavigationApplication {
     // protected static CallbackManager getCallbackManager() {
     // return mCallbackManager;
     // }
+
+
+
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+        MultiDex.install(this);
+    }
 
     @Override
     protected ReactGateway createReactGateway() {
