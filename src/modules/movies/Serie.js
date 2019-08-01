@@ -31,6 +31,9 @@ import { Image } from 'react-native-elements'
 import { TMDB_IMG_URL, YOUTUBE_API_KEY, YOUTUBE_URL } from '../../constants/api';
 import InAppBilling from "react-native-billing";
 import Touchable from "react-native-platform-touchable"
+import { Dropdown } from 'react-native-material-dropdown';
+
+import downloadManager from 'react-native-simple-download-manager';
 import {
 	AdMobBanner,
 	AdMobInterstitial,
@@ -224,6 +227,9 @@ class Serie extends Component {
 		qualitiesObjs = [];
 		nnqu = [];
 		this.state = {
+			sznss: [],
+			selectedSerieToDownload: 0,
+			seriesToDown: null,
 			castsTabHeight: null,
 			heightAnim: null,
 			infoTabHeight: null,
@@ -246,6 +252,7 @@ class Serie extends Component {
 			],
 			selectedLang: "",
 			Quality_Options: [],
+			options: [],
 			selectedQual: "",
 			seasons: [],
 			addedToFavorites: false,
@@ -259,6 +266,7 @@ class Serie extends Component {
 			UserData: {},
 			Qrtoken: '',
 			ShowQrModal: false,
+			ShowDownloadModal: false
 
 		};
 
@@ -271,7 +279,10 @@ class Serie extends Component {
 		this._viewMovie = this._viewMovie.bind(this);
 		this._openYoutube = this._openYoutube.bind(this);
 		this.checkSubscription()
-		//this.props.navigator.setOnNavigatorEvent(this._onNavigatorEvent.bind(this));
+		//this.props.navigator.setOnNavigatorEvent(this._onNavigatorEvent.bind(this));a
+
+
+
 	}
 
 
@@ -442,7 +453,11 @@ class Serie extends Component {
 				}
 				szn = szns;
 
-				this.setState({ series: szn, isLoading: false, seasons });
+				let sznss = [];
+				seasons.forEach((item, ind) => {
+					sznss.push({ value: ("სეზონი " + (ind + 1)) })
+				})
+				this.setState({ series: szn, isLoading: false, seasons, sznss });
 			});
 
 
@@ -700,7 +715,6 @@ class Serie extends Component {
 
 
 
-
 	postNewComment(data) {
 		if (data) {
 			db.ref('/movies/' + this.props.item.id).push({
@@ -748,7 +762,127 @@ class Serie extends Component {
 			//obj[this.state.UserData.id] = type;
 			//alert(this.state.UserData.id)
 			db.ref('/movies/' + this.props.item.id + '/' + key + '/likes/' + this.state.UserData.id).set(type)
+		} a
+	}
+
+
+	getSeason(value) {
+		var datiko = [];
+		let kaka = parseInt(value.substr(value.length - 1)) - 1;
+		if (kaka == -1) {
+			kaka = 9;
 		}
+		var sss = this.state.seasons[kaka];
+
+		if (sss == undefined) {
+		}
+		datiko = Object
+			.keys(sss)
+			.map(i => {
+				if (sss[i].quality || sss[i].lang || typeof (sss[i]) !== "undefined") {
+					return sss[i]
+				}
+			})
+		//	alert(datiko)
+
+
+		let std = [];
+		datiko.map((item, ind) => {
+			std.push({
+				value: ("სერია " + (ind + 1) + " " + item.name),
+				lang: item.lang,
+				qual: item.quality
+			})
+		})
+
+
+		this.setState({ seriesToDown: std })
+	}
+	async onValueChange(value) {
+		this.setState({ selected: value });
+
+		this.getSeason(value)
+	}
+
+	selectSerieToDownload(value, ind, data) {
+		let serieData = data[ind];
+		//alert(JSON.stringify(serieData))
+		let lang = serieData.lang;
+		let qual = serieData.qual;
+		var noption = lang.split(",")
+		var noquality = qual.split(",")
+		//	alert(JSON.stringify(noption))
+		let nores = [];
+		let noqures = [];
+
+
+		noption.map((item) => {
+			nores.push({ label: item, value: item })
+		})
+		noquality.map((item) => {
+			noqures.push({ label: this.getq(item), value: item })
+		})
+		this.setState({ serieI: ind, options: nores, selectedLang: noption[0], Quality_Options: noqures, selectedQual: noquality[0] }, () => {
+			this.setState({ selectSerieToDownload: value, selectedSerieToDownloadData: serieData })
+		})
+
+	}
+
+	getNum(num, sub) {
+		if (num == -1) {
+			return "10"
+		} else {
+			if (num < 9) {
+				if (sub) {
+					return ((num + 1)).toString()
+				} else {
+					return ("0" + (num + 1)).toString()
+				}
+			} else {
+				return (num + 1).toString();
+			}
+		}
+	}
+	getq(data) {
+		if (data > 1000) {
+			return "HD"
+		} else {
+			return "SD"
+		}
+	}
+	startDownloading() {
+		// alert("http://" + this.props.link + this.props.id + "_" + this.getNum(parseInt(this.state.selected.substr(this.state.selected.length - 1)) - 1) +
+		// 	"_" + this.getNum(this.state.serieI) + "_" + this.state.selectedLang + "_"
+		// 	+ this.state.selectedQual + ".mp4")
+		const url = "http://" + this.state.link + this.props.item.id + "_" + this.getNum(parseInt(this.state.selected.substr(this.state.selected.length - 1)) - 1) +
+			"_" + this.getNum(this.state.serieI) + "_" + this.state.selectedLang + "_"
+			+ this.state.selectedQual + ".mp4"
+		const config = {
+			downloadTitle: this.checkTitle(this.props.item),
+			downloadDescription: 'მიმდინარეობს გადმოწერა',
+			saveAsName: (this.state.selectedSerieToDownload + ".mp4"),
+			allowedInRoaming: true,
+			allowedInMetered: true,
+			showInDownloads: true,
+			external: false, //when false basically means use the default Download path (version ^1.3)
+			path: "Downloads/" //if "external" is true then use this path (version ^1.3)
+		};
+		downloadManager.download(url, {}, config).then(() => {
+			console.log('Download success!');
+		}).catch(err => {
+			console.log(err);
+			if (err.reason == "ERROR_INSUFFICIENT_SPACE") {
+				alert("თქვენ არ გაქვთ საკმარისი მეხსიერება")
+			}
+		})
+
+
+		// alert("http://" + this.props.link + this.props.id + "_" + this.getNum(parseInt(this.state.selected.substr(this.state.selected.length - 1))-1) +
+		// "_" + this.getNum(this.state.serieI) + "_" +  this.state.selectedLang + "_"
+		// + this.state.selectedQual + ".mp4")
+		// http://" + this.state.link +  this.props.navigation.state.params.key+ "_" + this.state.lang + "_" + 1500 + ".mp4
+		this.setState({ ShowDownloadModal: false })
+
 	}
 
 	render() {
@@ -772,7 +906,88 @@ class Serie extends Component {
 						scrollEventThrottle={100}
 						onContentSizeChange={this._onContentSizeChange}
 					>
+						<Modal animationIn="bounceInLeft"
+							animationOut="bounceOutRight"
+							animationInTiming={1000}
+							animationOutTiming={1000}
+							backdropTransitionInTiming={1000}
+							backdropTransitionOutTiming={1000}
+							isVisible={this.state.ShowDownloadModal} >
+							<View style={{
+								flex: 1,
+								flexDirection: 'column',
+								justifyContent: 'center',
+								alignItems: 'center'
+							}}>
+								<View style={{
+									backgroundColor: "#2B2C3D",
+									width: 300,
+									alignItems: 'center',
+									padding: 15
+								}}>
 
+									<View style={{ width: 250 }}>
+										<Dropdown
+											label='სეზონის არჩევა'
+											baseColor="#fff"
+											textColor="#FFF"
+											data={this.state.sznss}
+											selectedItemColor="#000"
+											value={this.state.selected}
+											onChangeText={(data) => this.onValueChange(data)}
+										/>
+									</View>
+									{
+										this.state.seriesToDown ? (
+											<View style={{ width: 250, marginTop: 15 }}>
+												<Dropdown
+													label='სერიის არჩევა'
+													baseColor="#fff"
+													textColor="#FFF"
+													data={this.state.seriesToDown}
+													selectedItemColor="#000"
+													value={this.state.selectedSerieToDownload}
+													onChangeText={(data, ind, dat) => this.selectSerieToDownload(data, ind, dat)}
+												/>
+											</View>
+										) : (
+												<View />
+											)
+									}
+									{
+										this.state.selectedSerieToDownloadData ? (
+											<View style={{ width: 250 }}>
+												<Text style={{ color: "#FFF", paddingTop: 20, paddingBottom: 20 }}>აირჩიე ენა</Text>
+												<SwitchSelector options={this.state.options} initial={0} onPress={value => this.setState({ selectedLang: value })} />
+												<Text style={{ color: "#FFF", paddingTop: 20, paddingBottom: 20 }}>აირჩიე ხარისხი</Text>
+
+												<SwitchSelector options={this.state.Quality_Options} initial={0} onPress={value => this.setState({ selectedQual: value })} />
+											</View>
+										) : (<View />)
+									}
+
+
+									<View style={{ marginTop: 50, flexDirection: 'row' }}>
+
+
+										<TouchableOpacity onPress={() => this.setState({ ShowDownloadModal: false })} style={{ height: 30, width: 110, backgroundColor: "#2B2C3D", borderRadius: 25, justifyContent: 'center', alignItems: 'center' }}>
+											<Text style={{ color: "#FFF" }} >დახურვა</Text>
+										</TouchableOpacity>
+										<View style={{ width: 10 }} />
+										<TouchableOpacity disabled={this.state.selectedSerieToDownloadData ? (false) : (true)} onPress={() => this.startDownloading()} style={{
+											height: 38,
+											width: 110,
+											backgroundColor: this.state.selectedSerieToDownloadData ? ("#FFF") : ("2B2C3D"), borderRadius: 5, justifyContent: 'center', alignItems: 'center'
+										}}>
+											<Text style={{ color: this.state.selectedSerieToDownloadData ? ("#2B2C3D") : ("#7a797a") }}>გადმოწერა</Text>
+										</TouchableOpacity>
+
+
+									</View>
+
+								</View>
+							</View>
+						</Modal >
 						<Modal animationIn="bounceInLeft"
 							animationOut="bounceOutRight"
 							animationInTiming={1000}
@@ -818,54 +1033,7 @@ class Serie extends Component {
 							</View>
 
 						</Modal>
-						<Modal animationIn="bounceInLeft"
-							animationOut="bounceOutRight"
-							animationInTiming={1000}
-							animationOutTiming={1000}
-							backdropTransitionInTiming={1000}
-							backdropTransitionOutTiming={1000}
-							isVisible={this.state.ShowModal} >
-							<View style={{
-								flex: 1,
-								flexDirection: 'column',
-								justifyContent: 'center',
-								alignItems: 'center'
-							}}>
-								<View style={{
-									backgroundColor: "#2B2C3D",
-									width: 300,
-									height: 330,
-									alignItems: 'center',
-									padding: 15
-								}}>
 
-									<Text style={{ color: "#FFF", paddingTop: 20, paddingBottom: 20 }}>აირჩიე ენა</Text>
-									<SwitchSelector options={options} initial={0} onPress={value => this.setState({ selectedLang: value })} />
-									<Text style={{ color: "#FFF", paddingTop: 20, paddingBottom: 20 }}>აირჩიე ხარისხი</Text>
-
-
-
-									<SwitchSelector options={this.state.Quality_Options} initial={0} onPress={value => this.setState({ selectedQual: value })} />
-									<View style={{ marginTop: 50, flexDirection: 'row' }}>
-
-
-
-										<TouchableOpacity onPress={() => this.setState({ ShowModal: false })} style={{ height: 30, width: 110, backgroundColor: "#2B2C3D", borderRadius: 25, justifyContent: 'center', alignItems: 'center' }}>
-											<Text style={{ color: "#FFF" }} >დახურვა</Text>
-										</TouchableOpacity>
-										<View style={{ width: 10 }} />
-										<TouchableOpacity onPress={() => this.playMovie(item)} style={{
-											height: 38,
-											width: 110,
-											backgroundColor: "#FFF", borderRadius: 5, justifyContent: 'center', alignItems: 'center'
-										}}>
-											<Text style={{ color: "#2B2C3D" }}>კარგი</Text>
-										</TouchableOpacity>
-									</View>
-
-								</View>
-							</View>
-						</Modal>
 						<View style={{ height }}>
 							<View>
 								<Image blurRadius={2} source={{ uri: item.poster ? (item.poster) : ("http://staticnet.adjara.com/moviecontent/" + item.id + "/covers/214x321-" + item.id + ".jpg") }} style={styles.imageBackdrop} />
@@ -875,6 +1043,12 @@ class Serie extends Component {
 										this.setState({ ShowQrModal: true })
 									}} >
 										<MaterialCommunityIcons size={50} color="#FFF" name="qrcode" />
+									</TouchableOpacity>
+
+									<TouchableOpacity style={{ width: 50, height: 50, marginLeft: 15 }} onPress={() => {
+										this.setState({ ShowDownloadModal: true })
+									}} >
+										<Icon size={50} color="#FFF" name="md-download" />
 									</TouchableOpacity>
 								</View>
 							</View>
@@ -1050,8 +1224,8 @@ class Serie extends Component {
 								</ScrollableTabView>
 							</View>
 						</View>
-					</ScrollView>
-				</View>
+					</ScrollView >
+				</View >
 		);
 	}
 }

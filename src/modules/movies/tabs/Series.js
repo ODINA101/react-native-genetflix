@@ -70,6 +70,9 @@ export default class Series extends Component {
 				this.setState({ RecommendedPlayerInstalled: isInstalled })
 			});
 	}
+	dl() {
+		alert('works')
+	}
 	getCaptions = (id) => {
 		//	alert(parseInt(this.state.selected.substr(this.state.selected.length - 1)) - 1)
 		///alert(this.getNum(parseInt(this.state.selected.substr(this.state.selected.length - 1)) - 1))
