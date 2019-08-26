@@ -13,14 +13,14 @@ import { convertStringToNumber } from 'convert-string-to-number'
 import styles from './styles/Casts';
 import { TMDB_IMG_URL } from '../../../constants/api';
 import { Dropdown } from 'react-native-material-dropdown';
+import MaterialIcon from 'react-native-vector-icons/MaterialIcons'
 import SwitchSelector from 'react-native-switch-selector';
 import Modal from "react-native-modal";
 import Swiper from 'react-native-swiper';
 import VideoPlayer from "react-native-native-video-player"
 import axios from "axios"
 import { AppInstalledChecker, CheckPackageInstallation } from 'react-native-check-app-install';
-
-
+import Orientation from 'react-native-orientation-locker';
 export default class Series extends Component {
 	constructor(props) {
 		super(props);
@@ -49,7 +49,8 @@ export default class Series extends Component {
 				{ label: 'Off', value: 'off' },
 			],
 			selectedCaptions: "",
-			CaptionsUrl: ""
+			CaptionsUrl: "",
+			portrait: true
 		}
 
 		let szns = [];
@@ -70,9 +71,27 @@ export default class Series extends Component {
 				this.setState({ RecommendedPlayerInstalled: isInstalled })
 			});
 	}
-	dl() {
-		alert('works')
+
+	_onOrientationDidChange = (orientation) => {
+		if (orientation !== 'PORTRAIT') {
+			this.setState({ portrait: false })
+		} else {
+			//do something with portrait layout
+			this.setState({ portrait: true })
+		}
+	};
+
+
+	componentWillMount() {
+
+		var initial = Orientation.getInitialOrientation();
+		if (initial === 'PORTRAIT') {
+			this.setState({ portrait: true })
+		} else {
+			this.setState({ portrait: false })
+		}
 	}
+
 	getCaptions = (id) => {
 		//	alert(parseInt(this.state.selected.substr(this.state.selected.length - 1)) - 1)
 		///alert(this.getNum(parseInt(this.state.selected.substr(this.state.selected.length - 1)) - 1))
@@ -183,6 +202,12 @@ export default class Series extends Component {
 
 	}
 
+
+
+
+	componentDidMount() {
+		Orientation.addOrientationListener(this._onOrientationDidChange);
+	}
 	Play() {
 		// alert("http://" + this.props.link + this.props.id + "_" + this.getNum(parseInt(this.state.selected.substr(this.state.selected.length - 1)) - 1) +
 		// 	"_" + this.getNum(this.state.serieI) + "_" + this.state.selectedLang + "_"
@@ -254,40 +279,15 @@ export default class Series extends Component {
 
 	}
 	async onValueChange(value) {
-		//	alert(Number.parseInt(value[value.length-1]))
-
-
 		this.setState({ selected: value });
-		//value = Number.parseInt(value[value.length-1]);
 		this.getSeason(value)
-
-		//
-		// try {
-		//    await AsyncStorage.setItem(('SelectedSzn'+this.props.id),value);
-		//  } catch (error) {
-		//    // Error saving data
-		//  }
-
-
-		//  if(this.state.savedSelectedIndex) {
-		// if(this.state.savedSelectedIndexSzn) {
-		//  this.save(value,this.state.savedSelectedIndex,this.state.savedSelectedIndexSzn)
-		//
-		// }else{
-		//  this.save(value,this.state.savedSelectedIndex,null)
-		//
-		// }
-		//  }else{
-		//
-		// 	 this.save(value,null,null)
-		//  }
+		this.forceUpdate()
+		this.props.getTabHeight.bind(this, 'series', 60 * this.state.series.length)
 	}
 
 	render() {
-
-
-		let computedHeight = (80 + 15) * this.props.series.length; // (castImage.height + castContainer.marginBottom)
-		//computedHeight += 447 + 40; // Header height + container ((20 paddingVertical) = 40)
+		let computedHeight = (100 * this.state.series.length) + 150;
+		alert(computedHeight)
 		return (
 			<View style={styles.container} onLayout={this.props.getTabHeight.bind(this, 'series', computedHeight)}>
 				<Dropdown
@@ -297,23 +297,58 @@ export default class Series extends Component {
 					data={this.state.seasons}
 					selectedItemColor="#000"
 					value={this.state.selected}
-					onChangeText={(data) => this.onValueChange(data)}
+					onChangeText={(data) => {
+
+						this.onValueChange(data);
+					}}
 				/>
 				<View style={{ marginTop: 30 }} />
 				{
 					this.state.series.map((item, ind) => (
 
 						<TouchableOpacity onPress={() => this.playSerie(item.lang, item.quality, ind)} key={item.id} style={styles.castContainer}>
+
 							{
 								ind == this.state.selectedSerieId && this.state.selectedSznId == this.state.selected ? (
-									<View style={[styles.characterContainer, { backgroundColor: "#F5F5F5" }]}>
-										<Text style={[styles.characterName, { color: "#000" }]}>
+									<View style={{
+										flex: 1,
+										alignItems: 'center',
+										paddingLeft: 16,
+										paddingVertical: 10,
+										flexDirection: 'row',
+										justifyContent: 'space-between',
+
+									}}>
+										<Text style={{
+											color: "#FFF",
+											flexDirection: 'column',
+											fontSize: 16,
+											fontWeight: '500'
+
+
+										}}>
 											({ind + 1}) {item.name}
 										</Text>
+										<View>
+											<MaterialIcon name="radio-button-checked" color='#EA0000' size={25} />
+										</View>
 									</View>
 								) : (
-										<View style={styles.characterContainer}>
-											<Text style={styles.characterName}>
+										<View style={{
+											flex: 1,
+											justifyContent: 'center',
+											paddingLeft: 16,
+											paddingVertical: 10
+										}}>
+											<Text style={
+												{
+													color: 'white',
+													flexDirection: 'column',
+													fontSize: 16,
+													fontWeight: '500'
+												}
+
+											}>
 												({ind + 1}) {item.name}
 											</Text>
 										</View>
@@ -324,7 +359,7 @@ export default class Series extends Component {
 
 
 
-
+							<View style={{ height: 0.5, backgroundColor: '#FFF' }} />
 						</TouchableOpacity>
 					))
 				}
@@ -343,51 +378,68 @@ export default class Series extends Component {
 					}}>
 						<View style={{
 							backgroundColor: "#2B2C3D",
-							width: 300,
+							width: this.state.portrait ? 350 : 600,
+							height: this.state.portrait ? 'auto' : 300,
 							alignItems: 'center',
+							borderRadius: 10,
 							padding: 15
 						}}>
 
 							<Text style={{ color: "#FFF", paddingTop: 20, paddingBottom: 20 }}>აირჩიე ენა</Text>
 							<SwitchSelector options={this.state.options} initial={0} onPress={value => this.setState({ selectedLang: value })} />
-							<Text style={{ color: "#FFF", paddingTop: 20, paddingBottom: 20 }}>აირჩიე ხარისხი</Text>
-
-							<SwitchSelector options={this.state.Quality_Options} initial={0} onPress={value => this.setState({ selectedQual: value })} />
 
 
-							<Text style={{ color: "#FFF", paddingTop: 20, paddingBottom: 20 }}>აირჩიე player</Text>
-							<SwitchSelector options={this.state.video_Options} initial={0} onPress={value => this.setState({ selectedVideo: value })} />
-
-
-							{
-								!this.state.RecommendedPlayerInstalled ? (
-
-									<TouchableOpacity onPress={() => {
-										Linking.openURL("https://play.google.com/store/apps/details?id=com.mxtech.videoplayer.ad").catch((err) => console.error('An error occurred', err));
-									}}>
-										<Text style={{ textDecorationLine: 'underline', color: "red", marginTop: 8 }}>გადმოწერე რეკომენდირებული VideoPlayer</Text>
-									</TouchableOpacity>
-								) : (
-										<View />
-									)
-
-							}
-
-
-							{
-								this.state.Captions ? (
+							<View style={{ flexDirection: this.state.portrait ? 'column' : 'column' }}>
+								<View style={{ width: this.state.portrait ? 'auto' : 300, flexDirection: this.state.portrait ? 'column' : 'row' }}>
 									<View>
-										<Text style={{ color: "#FFF", paddingTop: 20, paddingBottom: 20 }}>ტიტრები</Text>
-										<SwitchSelector options={this.state.SubTitles_Options} initial={1} onPress={value => this.setState({ selectedCaptions: value })} />
+										<Text style={{ color: "#FFF", paddingTop: 20, paddingBottom: 20 }}>აირჩიე ხარისხი</Text>
+										<SwitchSelector options={this.state.Quality_Options} initial={0} onPress={value => this.setState({ selectedQual: value })} />
 									</View>
-								) : (
-										<View />
-									)
+									<View style={{ width: this.state.portrait ? 200 : 220, paddingLeft: this.state.portrait ? 0 : 20 }}>
+
+										<Text style={{ color: "#FFF", paddingTop: 20, paddingBottom: 20 }}>აირჩიე player</Text>
+										<SwitchSelector options={this.state.video_Options} initial={0} onPress={value => this.setState({ selectedVideo: value })} />
+
+									</View>
+								</View>
+							</View>
+
+
+							{
+								this.state.portrait ? (
+									<View>
+
+										{
+											!this.state.RecommendedPlayerInstalled ? (
+
+												<TouchableOpacity onPress={() => {
+													Linking.openURL("https://play.google.com/store/apps/details?id=com.mxtech.videoplayer.ad").catch((err) => console.error('An error occurred', err));
+												}}>
+													<Text style={{ textDecorationLine: 'underline', color: "red", marginTop: 8 }}>გადმოწერე რეკომენდირებული VideoPlayer</Text>
+												</TouchableOpacity>
+											) : (
+													<View />
+												)
+
+										}
+
+
+										{
+											this.state.Captions ? (
+												<View>
+													<Text style={{ color: "#FFF", paddingTop: 20, paddingBottom: 20 }}>ტიტრები</Text>
+													<SwitchSelector options={this.state.SubTitles_Options} initial={1} onPress={value => this.setState({ selectedCaptions: value })} />
+												</View>
+											) : (
+													<View />
+												)
+										}
+									</View>
+
+								) : (<View />)
 							}
 
-							<View style={{ marginTop: 50, flexDirection: 'row' }}>
-
-
+							<View style={{ marginTop: this.state.portrait ? 50 : 20, flexDirection: 'row' }}>
 								<TouchableOpacity onPress={() => this.setState({ ShowModal: false })} style={{ height: 30, width: 110, backgroundColor: "#2B2C3D", borderRadius: 25, justifyContent: 'center', alignItems: 'center' }}>
 									<Text style={{ color: "#FFF" }} >დახურვა</Text>
 								</TouchableOpacity>

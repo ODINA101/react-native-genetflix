@@ -3,18 +3,28 @@ import {
 	View,
 	ListView,
 	TextInput,
-	Keyboard 
+	Keyboard
 } from 'react-native';
 import axios from 'axios';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
+import InAppBilling from "react-native-billing";
 import { TMDB_URL, TMDB_API_KEY } from '../../constants/api';
 import * as moviesActions from './movies.actions';
 import CardThree from './components/CardThree';
 import styles from './styles/Search';
 import { iconsMap } from '../../utils/AppIcons';
-import {Navigation} from "react-native-navigation"
+
+
+import {
+	AdMobBanner,
+	AdMobInterstitial,
+	PublisherBanner,
+	AdMobRewarded,
+} from 'react-native-admob'
+
+import { Navigation } from "react-native-navigation"
 class Search extends Component {
 	constructor(props) {
 		super(props);
@@ -22,7 +32,7 @@ class Search extends Component {
 		this.state = {
 			isLoading: true,
 			currentPage: 1,
-			dataSource:new ListView.DataSource({ rowHasChanged: (row1, row2) => row1 !== row2 }).cloneWithRows([]),
+			dataSource: new ListView.DataSource({ rowHasChanged: (row1, row2) => row1 !== row2 }).cloneWithRows([]),
 			searchResults: {
 				results: []
 			},
@@ -32,36 +42,38 @@ class Search extends Component {
 		this._viewMovie = this._viewMovie.bind(this);
 		this._handleTextInput = this._handleTextInput.bind(this);
 		//this.props.navigator.setOnNavigatorEvent(this._onNavigatorEvent.bind(this));
+
+		this.checkSubscription()
 	}
 
 	_handleTextInput(event) {
 		const query = event.nativeEvent.text;
 		this.setState({ query });
 		if (!query) this.setState({ query: '' });
-  if(query.length > 1) {
-this.setState({
-	dataSource:new ListView.DataSource({ rowHasChanged: (row1, row2) => row1 !== row2 }).cloneWithRows([])
-},()=> {
+		if (query.length > 1) {
+			this.setState({
+				dataSource: new ListView.DataSource({ rowHasChanged: (row1, row2) => row1 !== row2 }).cloneWithRows([])
+			}, () => {
 
 				axios.get(`http://net.adjara.com/Home/quick_search?ajax=1&search=${this.state.query}`)
 					.then(res => {
 						//alert(res.data)
-				//		alert(`http://net.adjara.com/Home/quick_search?ajax=1&search=${this.state.query}`)
+						//		alert(`http://net.adjara.com/Home/quick_search?ajax=1&search=${this.state.query}`)
 						let data = [];
 
-					//	alert(JSON.stringify(res.data.movies.data))
-										if(res.data.movies.data) {
-		        //const newData = res.data.movies.data;
-	         setTimeout(() => {
-						let ds = new ListView.DataSource({ rowHasChanged: (row1, row2) => row1 !== row2 });
-						let dataSource = ds.cloneWithRows(res.data.movies.data);
-						this.setState({
-							dataSource
-						},()=> {
-	     this.setState({isLoading:false})
+						//	alert(JSON.stringify(res.data.movies.data))
+						if (res.data.movies.data) {
+							//const newData = res.data.movies.data;
+							setTimeout(() => {
+								let ds = new ListView.DataSource({ rowHasChanged: (row1, row2) => row1 !== row2 });
+								let dataSource = ds.cloneWithRows(res.data.movies.data);
+								this.setState({
+									dataSource
+								}, () => {
+									this.setState({ isLoading: false })
 
-						});
-		},10)
+								});
+							}, 10)
 
 						}
 
@@ -71,12 +83,12 @@ this.setState({
 						//alert(JSON.stringify(res.data))
 					}).catch(err => {
 						console.log('next page', err); // eslint-disable-line
-					//	alert(err)
+						//	alert(err)
 					});
-})
+			})
 
 
-	}
+		}
 
 	}
 
@@ -84,7 +96,7 @@ this.setState({
 	}
 
 
-	_viewMovie(movieId,info,des) { 
+	_viewMovie(movieId, info, des) {
 
 		fetch(`http://net.adjara.com/req/jsondata/req.php?id=${info.id}&reqId=getInfo`)
 			.then(res => res.json())
@@ -97,12 +109,12 @@ this.setState({
 								component: {
 									name: 'movieapp.Serie',
 									passProps: {
-								    movieId:info.id,
-		 							item:Object.assign(info,{description:des}),
-										searching:true
+										movieId: info.id,
+										item: Object.assign(info, { description: des }),
+										searching: true
 									},
 									options: {
-										 topBar: {
+										topBar: {
 											height: 60,
 											elevation: 0,
 											drawBehind: true,
@@ -136,9 +148,9 @@ this.setState({
 								component: {
 									name: 'movieapp.Movie',
 									passProps: {
-										 movieId,
-		 				item:Object.assign(info,{description:des}),
-						searching:true
+										movieId,
+										item: Object.assign(info, { description: des }),
+										searching: true
 									},
 									options: {
 										topBar: {
@@ -171,24 +183,42 @@ this.setState({
 			});
 	}
 
- 
- componentDidMount() {
+
+	async checkSubscription() {
+		try {
+			await InAppBilling.open();
+			// If subscriptions/products are updated server-side you
+			// will have to update cache with loadOwnedPurchasesFromGoogle()
+			await InAppBilling.loadOwnedPurchasesFromGoogle();
+			const isSubscribed = await InAppBilling.isSubscribed("noads597")
+			//   console.log("Customer subscribed: ", isSubscribed);
+			if (!isSubscribed) {
+				AdMobInterstitial.requestAd().then(() => AdMobInterstitial.showAd());
+			}
+		} catch (err) {
+			console.log(err);
+		} finally {
+			await InAppBilling.close();
+		}
+	}
+
+	componentDidMount() {
 		this.navigationEventListener = Navigation.events().bindComponent(this);
- }
+	}
 
- componentWillMount() {
-	if (this.navigationEventListener) {
-  this.navigationEventListener.remove();
-}
-}
+	componentWillMount() {
+		if (this.navigationEventListener) {
+			this.navigationEventListener.remove();
+		}
+	}
 
-  navigationButtonPressed({ buttonId }) { 
-   if(buttonId == "backButton") {
-	   Navigation.dismissModal(this.props.componentId);
-	   Keyboard.dismiss()
-	   
-   }
-  }
+	navigationButtonPressed({ buttonId }) {
+		if (buttonId == "backButton") {
+			Navigation.dismissModal(this.props.componentId);
+			Keyboard.dismiss()
+
+		}
+	}
 
 
 
@@ -211,7 +241,7 @@ this.setState({
 					onEndReached={type => this._retrieveNextPage()}
 					onEndReachedThreshold={1200}
 					dataSource={this.state.dataSource}
-					renderRow={(rowData,ind) => <CardThree searching={true} info={rowData} viewMovie={(data,des) => {this._viewMovie(data.id,data,des)}} />}
+					renderRow={(rowData, ind) => <CardThree searching={true} info={rowData} viewMovie={(data, des) => { this._viewMovie(data.id, data, des) }} />}
 					renderSeparator={(sectionId, rowId) => <View key={rowId} style={styles.seperator} />}
 				/>
 			);
@@ -237,7 +267,7 @@ this.setState({
 						/>
 					</View>
 				</View>
-				{ !this.state.isLoading && this._renderListView() }
+				{!this.state.isLoading && this._renderListView()}
 			</View>
 
 		);

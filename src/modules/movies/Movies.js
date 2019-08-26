@@ -5,9 +5,10 @@ import {
 	Text,
 	TouchableOpacity,
 	View,
-	Platform
+	Platform,
 } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Swiper from 'react-native-swiper';
 import { bindActionCreators } from 'redux';
@@ -21,18 +22,24 @@ import ProgressBar from '../_global/ProgressBar';
 import styles from './styles/Movies';
 import { iconsMap } from '../../utils/AppIcons';
 import axios from "axios"
+import { BackHandler as BackAndroid } from 'react-native'
+import BlurOverlay, { closeOverlay, openOverlay } from 'react-native-blur-overlay';
+
 import List from "./categories"
 import InAppBilling from "react-native-billing";
-
 import {
 	AdMobBanner,
 	AdMobInterstitial,
 	PublisherBanner,
 	AdMobRewarded,
 } from 'react-native-admob'
+import { Button } from 'react-native-elements';
 
 var qrrIcon;
+var fltrIcon;
+
 MaterialCommunityIcons.getImageSource('qrcode-scan', 28, '#F5002A').then((source) => { qrrIcon = source });
+MaterialIcons.getImageSource('filter-list', 28, '#F5002A').then((source) => { fltrIcon = source });
 
 class Movies extends Component {
 	constructor(props) {
@@ -60,6 +67,7 @@ class Movies extends Component {
 		//alert(JSON.stringify(props))
 		//.setOnNavigatorEvent(this.onNavigatorEvent.bind(this))
 		AdMobInterstitial.setAdUnitID('ca-app-pub-6370427711797263/7435578378');
+		AdMobRewarded.setAdUnitID('ca-app-pub-6370427711797263/5458913307')
 		//	this.checkSubscription()
 		//AdMobInterstitial.requestAd().then(() => AdMobInterstitial.showAd());
 		//alert(List)
@@ -132,7 +140,9 @@ class Movies extends Component {
 			await InAppBilling.close();
 		}
 	}
-
+	handleBackButton() {
+		return true;
+	}
 
 
 	componentDidMount() {
@@ -281,60 +291,13 @@ class Movies extends Component {
 
 		});
 
-		axios.get("http://adjaranet.com/req/jsondata/req.php?reqId=getCollections")
-			.then(res => {
-				res = res.data;
-				var FinalData = [];
-
-
-				Object.values(res).forEach((item, i) => {
-					FinalData.push({
-						name: item.name,
-						id: Object.keys(res)[i]
-					})
-				})
-
-
-				//alert(JSON.stringify(res.data))
-				this.setState({ collections: FinalData, isLoading: false })
-			})
-
 
 
 		if (isRefreshed && this.setState({ isRefreshing: false }));
 	}
 
 
-
-
-
-
-
-
-
-
-
 	_viewMoviesList(type, title) {
-		// let rightButtons = [];
-		// if (Platform.OS === 'ios') {
-		// 	rightButtons = [
-		// 		{
-		// 			id: 'close',
-		// 			title: 'Close',
-		// 			icon: iconsMap['ios-close']
-		// 		}
-		// 	];
-		// this.props.navigator.showModal({
-		// 	title,
-		// 	screen: 'movieapp.',
-		// 	passProps: {
-		// 		type
-		// 	},
-		// 	navigatorButtons: {
-		// 		rightButtons
-		// 	}
-		// });
-
 		Navigation.showModal({
 			stack: {
 				children: [{
@@ -360,6 +323,15 @@ class Movies extends Component {
 										color: "#FFF"
 									}
 								],
+								rightButtons: [
+
+									{
+
+										id: 'filter',
+										icon: fltrIcon,
+										color: '#FFF'
+									}
+								]
 							},
 						},
 					}
@@ -583,7 +555,14 @@ class Movies extends Component {
 	}
 
 
+	renderBlurChilds() {
+		return (
+			<View style={styles.image}>
 
+				<Text style={{ color: "#FFF" }}>lasdasd</Text>
+			</View>
+		);
+	}
 	render() {
 		const { nowPlayingMovies, popularMovies } = this.props;
 		const iconPlay = <Icon name="md-play" size={21} color="#9F9F9F" style={{ paddingLeft: 3, width: 22 }} />;
@@ -592,36 +571,36 @@ class Movies extends Component {
 
 		return (
 			this.state.isLoading ? <View style={styles.progressBar}><ProgressBar /></View> :
-				<ScrollView
-					style={[styles.container]}
-				>
-					<Swiper
-						style={{ marginTop: 60 }}
-						autoplay
-						autoplayTimeout={4}
-						showsPagination={false}
-						height={248}>
-						{nowPlayingMovies.map(info => (
-							<CardOne key={info.id} info={info} viewMovie={() => this._viewMovie(info.id, info)} />
-						))}
-					</Swiper>
-					<View>
+				<View>
+					<ScrollView
+						style={[styles.container]}
+					>
+						<Swiper
+							style={{ marginTop: 60 }}
+							autoplay
+							autoplayTimeout={4}
+							showsPagination={false}
+							height={248}>
+							{nowPlayingMovies.map(info => (
+								<CardOne key={info.id} info={info} viewMovie={() => this._viewMovie(info.id, info)} />
+							))}
+						</Swiper>
+						<View>
 
-						<View style={styles.listHeading}>
-							<Text style={styles.listHeadingLeft}>კატეგორიები</Text>
+							{/* <View style={styles.listHeading}>
+								<Text style={styles.listHeadingLeft}>კატეგორიები</Text>
+							</View>
+							<ScrollView horizontal showsHorizontalScrollIndicator={false}>
+								{
+									List.map((item, i) => {
+										return (
+											<CardFour key={i} collections={false} info={item} viewCat={(id, title) => this._viewCat(id, title, false)} />
+										)
+									})
+								}
+							</ScrollView> */}
 
-						</View>
-						<ScrollView horizontal showsHorizontalScrollIndicator={false}>
-							{
-								List.map((item, i) => {
-									return (
-										<CardFour key={i} collections={false} info={item} viewCat={(id, title) => this._viewCat(id, title, false)} />
-									)
-								})
-							}
-						</ScrollView>
-
-						{/* <View style={styles.listHeading}>
+							{/* <View style={styles.listHeading}>
 							<Text style={styles.listHeadingLeft}>კოლექციები</Text>
 						</View>
 						<ScrollView horizontal showsHorizontalScrollIndicator={false}>
@@ -635,49 +614,51 @@ class Movies extends Component {
 						</ScrollView> */}
 
 
-						<View style={styles.listHeading}>
-							<Text style={styles.listHeadingLeft}>ფილმები ქართულად</Text>
-							<TouchableOpacity>
-								<Text
-									style={styles.listHeadingRight}
-									onPress={this._viewMoviesList.bind(this, 'ფილმები ქართულად', 'ფილმები ქართულად')}>
-									ყველა
+							<View style={styles.listHeading}>
+								<Text style={styles.listHeadingLeft}>ფილმები ქართულად</Text>
+								<TouchableOpacity>
+									<Text
+										style={styles.listHeadingRight}
+										onPress={this._viewMoviesList.bind(this, 'ფილმები ქართულად', 'ფილმები ქართულად')}>
+										ყველა
 							</Text>
-							</TouchableOpacity>
-						</View>
-						<ScrollView horizontal showsHorizontalScrollIndicator={false}>
-							{nowPlayingMovies.map(info => (
-								<CardTwo key={info.id} info={info} viewMovie={() => this._viewMovie(info.id, info)} />
-							))}
-						</ScrollView>
+								</TouchableOpacity>
+							</View>
+							<ScrollView horizontal showsHorizontalScrollIndicator={false}>
+								{nowPlayingMovies.map(info => (
+									<CardTwo key={info.id} info={info} viewMovie={() => this._viewMovie(info.id, info)} />
+								))}
+							</ScrollView>
 
 
 
 
-						<View style={styles.listHeading}>
-							<Text style={styles.listHeadingLeft}>პრემიერა</Text>
-							{/* <TouchableOpacity>
+							<View style={styles.listHeading}>
+								<Text style={styles.listHeadingLeft}>პრემიერა</Text>
+								{/* <TouchableOpacity>
 								<Text
 									style={styles.listHeadingRight}
 									onPress={this._viewMoviesList.bind(this, 'ფილმები ქართულად', 'პრემიერა')}>
 									ყველა
 										</Text>
 							</TouchableOpacity> */}
+							</View>
+							<ScrollView horizontal showsHorizontalScrollIndicator={false}>
+								{
+									popularMovies.map(info => (
+										<CardTwo key={info.id} info={info} viewMovie={this._viewMovie} />
+									))
+
+								}
+							</ScrollView>
+
+
+							<View style={styles.browseList}>
+							</View>
 						</View>
-						<ScrollView horizontal showsHorizontalScrollIndicator={false}>
-							{
-								popularMovies.map(info => (
-									<CardTwo key={info.id} info={info} viewMovie={this._viewMovie} />
-								))
+					</ScrollView>
 
-							}
-						</ScrollView>
-
-
-						<View style={styles.browseList}>
-						</View>
-					</View>
-				</ScrollView>
+				</View>
 		);
 	}
 }

@@ -41,6 +41,7 @@ import AutoHeightWebView from 'react-native-autoheight-webview'
 import Firebase from 'firebase';
 import { db } from '../../config';
 import RNShineButton from 'react-native-shine-button';
+import { BackHandler as BackAndroid } from 'react-native'
 import DoubleClick from "react-native-double-tap"
 import { LoginButton, AccessToken, GraphRequest, GraphRequestManager } from 'react-native-fbsdk';
 let Star = <Icon family={"FontAwesome"} name={"star"} color={"#808080"} />;
@@ -52,6 +53,9 @@ import ViewShot from "react-native-view-shot";
 import Share from 'react-native-share';
 import InAppBilling from "react-native-billing";
 import { Image } from "react-native-elements"
+
+import Orientation from 'react-native-orientation-locker';
+
 import base64 from "react-native-base64";
 //import QRCode from 'react-native-qrcode';
 import QRCode from 'react-native-qrcode-svg';
@@ -250,6 +254,7 @@ class Movie extends Component {
 			ShowModal: false,
 			ShowQrModal: false,
 			loggedIn: false,
+			portrait: false,
 			QOptions: [
 				{ label: 'ქართული', value: '1' },
 				{ label: 'ინგლისური', value: '1.5' },
@@ -302,8 +307,6 @@ class Movie extends Component {
 			});
 		this.postNewComment = this.postNewComment.bind(this)
 		//Firebase
-
-		//Firebase
 	}
 	getCaptions = () => {
 		axios.get("http://staticnet.adjara.com/subtitles/" + this.props.item.id + "_English.vtt")
@@ -328,7 +331,6 @@ class Movie extends Component {
 
 		this.setState({ commentTxt: "" })
 	}
-
 	async checkSubscription() {
 		try {
 			await InAppBilling.open();
@@ -348,8 +350,24 @@ class Movie extends Component {
 	}
 
 
+	_onOrientationDidChange = (orientation) => {
+		//alert(orientation)
+		if (orientation !== 'PORTRAIT') {
+
+			this.setState({ portrait: false })
+		} else {
+			//do something with portrait layout
+			this.setState({ portrait: true })
+		}
+	};
 
 	componentWillMount() {
+		var initial = Orientation.getInitialOrientation();
+		if (initial === 'PORTRAIT') {
+			this.setState({ portrait: true })
+		} else {
+			this.setState({ portrait: false })
+		}
 		this._retrieveDetails();
 		let itemsRef = db.ref('/movies/' + this.props.item.id);
 		itemsRef.on('value', snapshot => {
@@ -363,20 +381,13 @@ class Movie extends Component {
 			}
 		});
 	}
-
-
-
-
-
 	getq(data) {
 		if (data > 1000) {
 			return "HD"
 		} else {
 			return "SD"
 		}
-
 	}
-
 	_retrieveDetails(isRefreshed) {
 		// this.props.actions.retrieveMovieDetails(this.props.movieId)
 		// 	.then(() => {
@@ -398,8 +409,6 @@ class Movie extends Component {
 					// alert(this.props.item.id)
 					parsedVal.forEach(item => {
 						if (item.id == this.props.item.id) {
-
-
 							Navigation.mergeOptions(this.props.componentId, {
 
 								topBar: {
@@ -456,16 +465,12 @@ class Movie extends Component {
 						//	alert(JSON.stringify(noption))
 						let nores = [];
 						let noqures = [];
-
-
 						noption.map((item) => {
 							nores.push({ label: item, value: item })
 						})
 						noquality.map((item) => {
 							noqures.push({ label: this.getq(item), value: item })
 						})
-
-
 						this.setState({ QOptions: nores, link: info[0].url, selectedLang: noption[0], Quality_Options: noqures, selectedQual: noquality[0] })
 						Object
 							.keys(res.cast)
@@ -598,8 +603,11 @@ class Movie extends Component {
 		});
 	}
 
-
+	handleBackButton() {
+		return true;
+	}
 	componentDidMount() {
+		Orientation.addOrientationListener(this._onOrientationDidChange);
 		this.navigationEventListener = Navigation.events().bindComponent(this);
 		AccessToken.getCurrentAccessToken()
 			.then((data) => {
@@ -953,62 +961,76 @@ class Movie extends Component {
 							}}>
 								<View style={{
 									backgroundColor: "#2B2C3D",
-									width: 300,
-
+									width: this.state.portrait ? 350 : 600,
+									height: this.state.portrait ? 'auto' : 300,
 									alignItems: 'center',
+									borderRadius: 10,
 									padding: 15
 								}}>
+
 									<Text style={{ color: "#FFF", paddingTop: 20, paddingBottom: 20 }}>აირჩიე ენა</Text>
 									<SwitchSelector options={options} initial={0} onPress={value => this.setState({ selectedLang: value })} />
-									<Text style={{ color: "#FFF", paddingTop: 20, paddingBottom: 20 }}>აირჩიე ხარისხი</Text>
-									<SwitchSelector options={this.state.Quality_Options} initial={0} onPress={value => this.setState({ selectedQual: value })} />
-									<Text style={{ color: "#FFF", paddingTop: 20, paddingBottom: 20 }}>აირჩიე player</Text>
-									<SwitchSelector options={this.state.video_Options} initial={0} onPress={value => this.setState({ selectedVideo: value })} />
 
-
-									{
-										!this.state.RecommendedPlayerInstalled ? (
-
-											<TouchableOpacity onPress={() => {
-												Linking.openURL("https://play.google.com/store/apps/details?id=com.mxtech.videoplayer.ad").catch((err) => console.error('An error occurred', err));
-											}}>
-												<Text style={{ textDecorationLine: 'underline', color: "red", marginTop: 8 }}>გადმოწერე რეკომენდირებული VideoPlayer</Text>
-											</TouchableOpacity>
-										) : (
-												<View />
-											)
-
-									}
-
-									{
-										this.state.Captions ? (
+									<View style={{ flexDirection: this.state.portrait ? 'column' : 'column' }}>
+										<View style={{ width: this.state.portrait ? 'auto' : 300, flexDirection: this.state.portrait ? 'column' : 'row' }}>
 											<View>
-												<Text style={{ color: "#FFF", paddingTop: 20, paddingBottom: 20 }}>ტიტრები</Text>
-												<SwitchSelector options={this.state.SubTitles_Options} initial={1} onPress={value => this.setState({ selectedCaptions: value })} />
+												<Text style={{ color: "#FFF", paddingTop: 20, paddingBottom: 20 }}>აირჩიე ხარისხი</Text>
+												<SwitchSelector options={this.state.Quality_Options} initial={0} onPress={value => this.setState({ selectedQual: value })} />
 											</View>
-										) : (
-												<View />
-											)
-									}
+											<View style={{ width: this.state.portrait ? 'auto' : 220, paddingLeft: this.state.portrait ? 0 : 20 }}>
+												<Text style={{ color: "#FFF", paddingTop: 20, paddingBottom: 20 }}>აირჩიე player</Text>
+												<SwitchSelector options={this.state.video_Options} initial={0} onPress={value => this.setState({ selectedVideo: value })} />
+											</View>
+										</View>
 
 
+										{
+											this.state.portrait ? (
+												<View>
+													{
+														!this.state.RecommendedPlayerInstalled ? (
 
+															<TouchableOpacity onPress={() => {
+																Linking.openURL("https://play.google.com/store/apps/details?id=com.mxtech.videoplayer.ad").catch((err) => console.error('An error occurred', err));
+															}}>
+																<Text style={{ textDecorationLine: 'underline', color: "red", marginTop: 8 }}>გადმოწერე რეკომენდირებული VideoPlayer</Text>
+															</TouchableOpacity>
+														) : (
+																<View />
+															)
 
-									<View style={{ marginTop: 50, flexDirection: 'row' }}>
-										<TouchableOpacity onPress={() => this.setState({ ShowModal: false })} style={{ height: 30, width: 110, backgroundColor: "#2B2C3D", borderRadius: 25, justifyContent: 'center', alignItems: 'center' }}>
-											<Text style={{ color: "#FFF" }}>დახურვა</Text>
-										</TouchableOpacity>
-										<View style={{ width: 10 }} />
-										<TouchableOpacity onPress={() => this.playMovie(item)} style={{
-											height: 38,
-											width: 110,
-											backgroundColor: "#FFF", borderRadius: 5, justifyContent: 'center', alignItems: 'center'
-										}}>
-											<Text style={{ color: "#2B2C3D" }}>კარგი</Text>
-										</TouchableOpacity>
+													}
+
+													{
+														this.state.Captions ? (
+															<View>
+																<Text style={{ color: "#FFF", paddingTop: 20, paddingBottom: 20 }}>ტიტრები</Text>
+																<SwitchSelector options={this.state.SubTitles_Options} initial={1} onPress={value => this.setState({ selectedCaptions: value })} />
+															</View>
+														) : (
+																<View />
+															)
+													}
+												</View>
+											) : (<View />)
+										}
+										<View>
+											<View style={{ marginTop: this.state.portrait ? 50 : 20, flexDirection: 'row' }}>
+												<TouchableOpacity onPress={() => this.setState({ ShowModal: false })} style={{ height: 30, width: 110, backgroundColor: "#2B2C3D", borderRadius: 25, justifyContent: 'center', alignItems: 'center' }}>
+													<Text style={{ color: "#FFF" }}>დახურვა</Text>
+												</TouchableOpacity>
+												<View style={{ width: 10 }} />
+												<TouchableOpacity onPress={() => this.playMovie(item)} style={{
+													height: 38,
+													width: 110,
+													backgroundColor: "#FFF", borderRadius: 5, justifyContent: 'center', alignItems: 'center'
+												}}>
+													<Text style={{ color: "#2B2C3D" }}>კარგი</Text>
+												</TouchableOpacity>
+											</View>
+
+										</View>
 									</View>
-
-
 
 
 
@@ -1205,7 +1227,7 @@ class Movie extends Component {
 							</View>
 						</View>
 					</ScrollView>
-				</View>
+				</View >
 		);
 	}
 }

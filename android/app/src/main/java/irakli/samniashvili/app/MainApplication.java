@@ -4,7 +4,8 @@ package irakli.samniashvili.app;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
-import com.klarna.reactnative.zlib.RNReactNativeZlibPackage;
+import org.wonday.orientation.OrientationPackage;
+import com.dylanvann.fastimage.FastImageViewPackage;
 import com.horcrux.svg.SvgPackage;
 import com.zaguiini.RNPureJwt.RNPureJwtPackage;
 import com.lewin.qrcode.QRScanReaderPackage;
@@ -42,20 +43,24 @@ import java.util.Arrays;
 import java.util.List;
 import cl.json.RNSharePackage;
 import fr.greweb.reactnativeviewshot.RNViewShotPackage;
-import com.klarna.reactnative.zlib.RNReactNativeZlibPackage;
 import androidx.multidex.MultiDex;
 import android.content.Context;
+import com.dylanvann.fastimage.FastImageViewPackage;
+
+import android.content.Intent;
+import android.content.res.Configuration;
+import org.wonday.orientation.OrientationPackage;
+
+
 public class MainApplication extends NavigationApplication {
 
-    // private static CallbackManager mCallbackManager =
-    // CallbackManager.Factory.create();
-
-    // protected static CallbackManager getCallbackManager() {
-    // return mCallbackManager;
-    // }
-
-
-
+   @Override
+   public void onConfigurationChanged(Configuration newConfig) {
+       super.onConfigurationChanged(newConfig);
+       Intent intent = new Intent("onConfigurationChanged");
+       intent.putExtra("newConfig", newConfig);
+       this.sendBroadcast(intent);
+   }
 
     @Override
     protected void attachBaseContext(Context base) {
@@ -82,13 +87,16 @@ public class MainApplication extends NavigationApplication {
     protected List<ReactPackage> getPackages() {
         // Add additional packages you require here
         // No need to add RnnPackage and MainReactPackage
-        return Arrays.<ReactPackage>asList(new RNSharePackage(), new RNViewShotPackage(),
-         new RNPureJwtPackage(), new RNCWebViewPackage(), new SvgPackage(),
+        return Arrays.<ReactPackage>asList(
+        new OrientationPackage(),    
+        new FastImageViewPackage(),new RNSharePackage(), new RNViewShotPackage(),
+
+         new RNPureJwtPackage(), new RNCWebViewPackage(), new SvgPackage(), 
                 new RNShineButtonPackage(), new RNCameraPackage(), new FBSDKPackage(), new VectorIconsPackage(), // eg. new
                                                              new QRScanReaderPackage(),                                 // VectorIconsPackage()
                 new KCKeepAwakePackage(), new ReactNativeDownloadManagerPackage(),
                 new CheckPackageInstallationPackage(), new VideoPlayerPackage(), new LinearGradientPackage(),
-                new RNAdMobPackage(), new ReactVideoPackage(), new InAppBillingBridgePackage(),new RNReactNativeZlibPackage());
+                new RNAdMobPackage(), new ReactVideoPackage(), new InAppBillingBridgePackage());
     }
 
     @Override

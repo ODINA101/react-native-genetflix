@@ -14,6 +14,7 @@ import ActorMoviesList from './modules/movies/ActorMoviesList';
 import CatCol from './modules/movies/CatCol';
 import VideoPlayer from "./VideoPlayer"
 import CategoriesPage from './modules/movies/CategoriesPage'
+import CollectionsPage from './modules/movies/CollectionsPage'
 import QrCodeScan from './modules/movies/QrCodeScan'
 
 export function registerScreens(store, Provider) {
@@ -27,6 +28,7 @@ export function registerScreens(store, Provider) {
 	Navigation.registerComponentWithRedux('movieapp.ColMoviesList', () => ColMoviesList, Provider, store);
 	Navigation.registerComponentWithRedux('movieapp.ActorMoviesList', () => ActorMoviesList, Provider, store);
 	Navigation.registerComponentWithRedux('movieapp.CategoriesPage', () => CategoriesPage, Provider, store);
+	Navigation.registerComponentWithRedux('movieapp.CollectionsPage', () => CollectionsPage, Provider, store);
 	Navigation.registerComponentWithRedux('movieapp.QrCodeScan', () => QrCodeScan, Provider, store);
 
 

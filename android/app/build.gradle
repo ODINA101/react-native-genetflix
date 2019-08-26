@@ -103,10 +103,12 @@ android {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
          missingDimensionStrategy "RNN.reactNativeVersion", "reactNative57_5" // See note below!
-       versionCode 50282
-        versionName "92" 
-          missingDimensionStrategy 'react-native-camera',  'general'
-        multiDexEnabled true
+         versionCode 50286
+         versionName "96" 
+         missingDimensionStrategy 'react-native-camera',  'general'
+         multiDexEnabled true
+         renderscriptTargetApi 23
+         renderscriptSupportModeEnabled true
     }
      compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -165,9 +167,10 @@ configurations.all {
 }
 
 dependencies {
+    implementation project(':react-native-orientation-locker')
+    implementation project(':react-native-fast-image')
     def multidex_version = "2.0.1"
     implementation 'androidx.multidex:multidex:$multidex_version'
-    implementation project(':@klarna_react-native-zlib')
     implementation project(':react-native-svg')
     implementation project(':react-native-pure-jwt')
     implementation project(':react-native-qr-scanner')

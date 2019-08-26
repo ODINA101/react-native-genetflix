@@ -16,6 +16,14 @@ import ProgressBar from '../_global/ProgressBar';
 import styles from './styles/MoviesList';
 import { iconsMap } from '../../utils/AppIcons';
 import { Navigation } from "react-native-navigation"
+
+
+import FilterModal from '../FilterModal'
+
+
+import { MaterialDialog } from 'react-native-material-dialog';
+import { Picker, Item } from 'native-base';
+
 class MoviesList extends Component {
 	constructor(props) {
 		super(props);
@@ -24,7 +32,11 @@ class MoviesList extends Component {
 			isLoading: true,
 			isRefreshing: false,
 			currentPage: 1,
-			list: []
+			list: [],
+			startYear: 1900,
+			endYear: 2019,
+			showFilterModal: false,
+			filtering: false
 		};
 
 		this._viewMovie = this._viewMovie.bind(this);
@@ -74,38 +86,52 @@ class MoviesList extends Component {
 
 	}
 
-	_retrieveNextPage(type) {
-		//		if (this.state.currentPage !== this.props.list.len) {
-		this.setState({
-			currentPage: this.state.currentPage + 15
-		});
+	_retrieveNextPage(type, manual) {
+
+		if (manual) {
+
+			this.setState({
+				currentPage: 0
+			});
+		} else {
+
+		}
 
 		let page;
-		if (this.state.currentPage === 0) {
-			page = 15;
+		if (this.state.currentPage == 0) {
+			page = 0;
 			this.setState({ currentPage: 15 });
 		} else {
 			page = this.state.currentPage + 15;
+			this.setState({
+				currentPage: this.state.currentPage + 15
+			});
 		}
 		let genLink;
 		if (this.props.type == 'სერიალები ქართულად') {
 			//alert("serialia")
-			genLink = "http://net.adjara.com/Search/SearchResults?ajax=1&display=15&startYear=1900&endYear=2018&offset=" + page + "&isnew=0&needtags=0&orderBy=date&order%5Border%5D=desc&order%5Bdata%5D=published&language=georgian&country=false&game=0&softs=0&videos=0&xvideos=0&vvideos=0&dvideos=0&xphotos=0&vphotos=0&dphotos=0&trailers=0&episode=1&tvshow=0&flashgames=0"
+			genLink = "http://net.adjara.com/Search/SearchResults?ajax=1&display=15&startYear=1900&endYear=2019&offset=" + page + "&isnew=0&needtags=0&orderBy=date&order%5Border%5D=desc&order%5Bdata%5D=published&language=georgian&country=false&game=0&softs=0&videos=0&xvideos=0&vvideos=0&dvideos=0&xphotos=0&vphotos=0&dphotos=0&trailers=0&episode=1&tvshow=0&flashgames=0"
 		} else {
 
-			genLink = "http://net.adjara.com/Search/SearchResults?ajax=1&display=15&startYear=1900&endYear=2018&offset=" + page + "&isnew=0&needtags=0&orderBy=date&order%5Border%5D=desc&order%5Bdata%5D=published&language=georgian&country=false&game=0&softs=0&videos=0&xvideos=0&vvideos=0&dvideos=0&xphotos=0&vphotos=0&dphotos=0&trailers=0&episode=0&tvshow=0&flashgames=0"
+			genLink = "http://net.adjara.com/Search/SearchResults?ajax=1&display=15&startYear=1900&endYear=2019&offset=" + page + "&isnew=0&needtags=0&orderBy=date&order%5Border%5D=desc&order%5Bdata%5D=published&language=georgian&country=false&game=0&softs=0&videos=0&xvideos=0&vvideos=0&dvideos=0&xphotos=0&vphotos=0&dphotos=0&trailers=0&episode=0&tvshow=0&flashgames=0"
 		}
 
+		if (this.state.filtering) {
+			genLink = genLink.replace('startYear=1900', 'startYear=' + this.state.startYear)
+			genLink = genLink.replace('endYear=2019', 'endYear=' + this.state.endYear)
+			genLink = genLink.replace('language=georgian', 'language=' + this.state.language)
+
+			genLink = genLink.replace('date&order%5Border%5D=desc&order%5Bdata%5D=published', 'order%5Border%5D=desc&order%5Bdata%5D=relised')
 
 
+		}
 		axios.get(genLink)
 			.then(res => {
-				const data = this.state.list;
+				let data = this.state.list;
 				const newData = res.data.data;
-
 				newData.map((item, index) => data.push(item));
-
 				this.setState({
+					isLoading: false,
 					dataSource: this.state.dataSource.cloneWithRows(this.state.list)
 				});
 			}).catch(err => {
@@ -132,7 +158,7 @@ class MoviesList extends Component {
 										item: info
 									},
 									options: {
-										 topBar: {
+										topBar: {
 											height: 60,
 											elevation: 0,
 											drawBehind: true,
@@ -212,6 +238,10 @@ class MoviesList extends Component {
 		if (buttonId == "backButton") {
 			Navigation.dismissModal(this.props.componentId);
 
+
+		}
+		if (buttonId == 'filter') {
+			this.setState({ showFilterModal: true })
 		}
 	}
 
@@ -225,36 +255,62 @@ class MoviesList extends Component {
 
 	_onNavigatorEvent(event) {
 		if (event.type === 'NavBarButtonPress') {
-			if (event.id === 'close') {
-				this.props.navigator.dismissModal();
-			}
 		}
 	}
 
 	render() {
 		return (
-			this.state.isLoading ? <View style={styles.progressBar}><ProgressBar /></View> :
-				<ListView
-					style={styles.container}
-					enableEmptySections
-					onEndReached={type => this._retrieveNextPage(this.props.type)}
-					onEndReachedThreshold={1200}
-					dataSource={this.state.dataSource}
-					renderRow={rowData => <CardThree info={rowData} viewMovie={() => { this._viewMovie(rowData.id, rowData) }} />}
-					renderSeparator={(sectionId, rowId) => <View key={rowId} style={styles.seperator} />}
-					renderFooter={() => <View style={{ height: 50 }}><ProgressBar /></View>}
-					refreshControl={
-						<RefreshControl
-							refreshing={this.state.isRefreshing}
-							onRefresh={this._onRefresh}
-							colors={['#EA0000']}
-							tintColor="white"
-							title="loading..."
-							titleColor="white"
-							progressBackgroundColor="white"
-						/>
-					}
-				/>
+			<View style={{ flex: 1 }}>
+				{
+					this.state.isLoading ? (<View style={styles.progressBar}><ProgressBar /></View>) : (
+						<ListView
+							style={styles.container}
+							enableEmptySections
+							onEndReached={type => this._retrieveNextPage(this.props.type, false)}
+							onEndReachedThreshold={0.1}
+							dataSource={this.state.dataSource}
+							renderRow={rowData => <CardThree info={rowData} viewMovie={() => { this._viewMovie(rowData.id, rowData) }} />}
+							renderSeparator={(sectionId, rowId) => <View key={rowId} style={styles.seperator} />}
+							renderFooter={() => <View style={{ height: 50 }}><ProgressBar /></View>}
+							refreshControl={
+								<RefreshControl
+									refreshing={this.state.isRefreshing}
+									onRefresh={this._onRefresh}
+									colors={['#EA0000']}
+									tintColor="white"
+									title="loading..."
+									titleColor="white"
+									progressBackgroundColor="white"
+								/>
+							}
+						/>)
+
+				}
+				<FilterModal
+
+					onData={(data) => {
+						//	alert(data.selected3)
+
+						this.setState({
+							isLoading: true,
+							currentPage: 0,
+							list: [],
+							startYear: data.startYear,
+							endYear: data.endYear,
+							language: data.selected3,
+							filtering: true, showFilterModal: false
+						}, () => {
+							this._retrieveNextPage(this.props.type, true)
+							this.setState({
+								dataSource: this.state.dataSource.cloneWithRows([])
+							})
+						});
+
+
+					}}
+					close={() => this.setState({ showFilterModal: false })} visible={this.state.showFilterModal} />
+
+			</View>
 		);
 	}
 }

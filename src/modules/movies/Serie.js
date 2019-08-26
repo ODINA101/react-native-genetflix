@@ -58,6 +58,7 @@ import ViewShot from "react-native-view-shot";
 import Share from 'react-native-share';
 import SimpleCrypto from "simple-crypto-js";
 import QRCode from 'react-native-qrcode-svg';
+import { BackHandler as BackAndroid } from 'react-native'
 
 var seasons = [];
 var szn = [];
@@ -266,7 +267,7 @@ class Serie extends Component {
 			UserData: {},
 			Qrtoken: '',
 			ShowQrModal: false,
-			ShowDownloadModal: false
+			ShowDownloadModal: false,
 
 		};
 
@@ -305,7 +306,10 @@ class Serie extends Component {
 		}
 	}
 
+
+
 	componentWillMount() {
+
 		this._retrieveDetails();
 		let itemsRef = db.ref('/movies/' + this.props.item.id);
 		itemsRef.on('value', snapshot => {
@@ -513,6 +517,7 @@ class Serie extends Component {
 	}
 
 	_getTabHeight(tabName, height) {
+		if (tabName === 'casts') this.setState({ castsTabHeight: height });
 		if (tabName === 'series') this.setState({ castsTabHeight: height });
 		if (tabName === 'trailers') this.setState({ trailersTabHeight: height });
 		if (tabName === 'INFO') this.setState({ infoTabHeight: height });
@@ -560,6 +565,9 @@ class Serie extends Component {
 
 
 
+	handleBackButton() {
+		return true;
+	}
 
 
 	componentDidMount() {
@@ -607,7 +615,6 @@ class Serie extends Component {
 	async navigationButtonPressed({ buttonId }) {
 		if (buttonId == "close") {
 			Navigation.dismissModal(this.props.componentId);
-
 		}
 
 		if (buttonId == "love") {
@@ -707,14 +714,6 @@ class Serie extends Component {
 
 
 
-
-
-
-
-
-
-
-
 	postNewComment(data) {
 		if (data) {
 			db.ref('/movies/' + this.props.item.id).push({
@@ -729,17 +728,6 @@ class Serie extends Component {
 
 		this.setState({ commentTxt: "" })
 	}
-
-
-
-
-
-
-
-
-
-
-
 
 
 	checkTitle(data) {

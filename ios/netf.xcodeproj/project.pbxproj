@@ -77,6 +77,12 @@
 		FF7BD5C57C6E4E22A567FE0F /* libRNSVG-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6769CB75D0044823A3171DDE /* libRNSVG-tvOS.a */; };
 		A3A94077C0A447F2BB9FE8E2 /* libRNReactNativeZlib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E13637A5CB984B989A23D94D /* libRNReactNativeZlib.a */; };
 		09A58FD0270340118F50A98F /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 5FC9E41A37B840F2B03051D0 /* libz.tbd */; };
+		557523314F0B41529CF6C613 /* libRNBlur.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F6CE9D950D5443D197F7A11A /* libRNBlur.a */; };
+		7E2E60D4C62940D6AEB0A568 /* libSajjadBlurOverlay.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1600F3C2C71D4FDA967C1BBB /* libSajjadBlurOverlay.a */; };
+		2712D4D1E48446BF81862578 /* libFastImage.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AA5DB073BC444B8185B4F649 /* libFastImage.a */; };
+		DA4786FBA477474F8475197C /* libFastImage-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = ECD9D02D99AD43DE9B4DCB81 /* libFastImage-tvOS.a */; };
+		BE50D3FB42514D6082184D01 /* libRCTOrientation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A45FEE3439CA411A9DAE4564 /* libRCTOrientation.a */; };
+		2DCD1859099848BC8BB9A2E3 /* libRCTOrientation-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 08E0332E1EE54EA6A8EAF3E3 /* libRCTOrientation-tvOS.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -440,6 +446,16 @@
 		19A3ED619DC1438B95461397 /* RNReactNativeZlib.xcodeproj */ = {isa = PBXFileReference; name = "RNReactNativeZlib.xcodeproj"; path = "../node_modules/@klarna/react-native-zlib/ios/RNReactNativeZlib.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
 		E13637A5CB984B989A23D94D /* libRNReactNativeZlib.a */ = {isa = PBXFileReference; name = "libRNReactNativeZlib.a"; path = "libRNReactNativeZlib.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
 		5FC9E41A37B840F2B03051D0 /* libz.tbd */ = {isa = PBXFileReference; name = "libz.tbd"; path = "usr/lib/libz.tbd"; sourceTree = SDKROOT; fileEncoding = undefined; lastKnownFileType = sourcecode.text-based-dylib-definition; explicitFileType = undefined; includeInIndex = 0; };
+		07AE8F2E39E94717BD81AFCE /* RNBlur.xcodeproj */ = {isa = PBXFileReference; name = "RNBlur.xcodeproj"; path = "../node_modules/@react-native-community/blur/ios/RNBlur.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		F6CE9D950D5443D197F7A11A /* libRNBlur.a */ = {isa = PBXFileReference; name = "libRNBlur.a"; path = "libRNBlur.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		917E4ADE5FB64B29A7810EBE /* SajjadBlurOverlay.xcodeproj */ = {isa = PBXFileReference; name = "SajjadBlurOverlay.xcodeproj"; path = "../node_modules/react-native-blur-overlay/ios/SajjadBlurOverlay.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		1600F3C2C71D4FDA967C1BBB /* libSajjadBlurOverlay.a */ = {isa = PBXFileReference; name = "libSajjadBlurOverlay.a"; path = "libSajjadBlurOverlay.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		3379D32210CB467F9C725DDF /* FastImage.xcodeproj */ = {isa = PBXFileReference; name = "FastImage.xcodeproj"; path = "../node_modules/react-native-fast-image/ios/FastImage.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		AA5DB073BC444B8185B4F649 /* libFastImage.a */ = {isa = PBXFileReference; name = "libFastImage.a"; path = "libFastImage.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		ECD9D02D99AD43DE9B4DCB81 /* libFastImage-tvOS.a */ = {isa = PBXFileReference; name = "libFastImage-tvOS.a"; path = "libFastImage-tvOS.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		E38B79F9A3104EC9B7F17A4B /* RCTOrientation.xcodeproj */ = {isa = PBXFileReference; name = "RCTOrientation.xcodeproj"; path = "../node_modules/react-native-orientation-locker/iOS/RCTOrientation.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		A45FEE3439CA411A9DAE4564 /* libRCTOrientation.a */ = {isa = PBXFileReference; name = "libRCTOrientation.a"; path = "libRCTOrientation.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		08E0332E1EE54EA6A8EAF3E3 /* libRCTOrientation-tvOS.a */ = {isa = PBXFileReference; name = "libRCTOrientation-tvOS.a"; path = "libRCTOrientation-tvOS.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -488,6 +504,11 @@
 				D876CD5464A74CFDB84E1D1E /* libRNSVG.a in Frameworks */,
 				A3A94077C0A447F2BB9FE8E2 /* libRNReactNativeZlib.a in Frameworks */,
 				09A58FD0270340118F50A98F /* libz.tbd in Frameworks */,
+				557523314F0B41529CF6C613 /* libRNBlur.a in Frameworks */,
+				7E2E60D4C62940D6AEB0A568 /* libSajjadBlurOverlay.a in Frameworks */,
+				2712D4D1E48446BF81862578 /* libFastImage.a in Frameworks */,
+				BE50D3FB42514D6082184D01 /* libRCTOrientation.a in Frameworks */,
+				2DCD1859099848BC8BB9A2E3 /* libRCTOrientation-tvOS.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -507,6 +528,7 @@
 				A8697F588EC04C6394FF8228 /* libRNVectorIcons-tvOS.a in Frameworks */,
 				719F8F12883B4C9AB08540FE /* libReactNativeConfig-tvOS.a in Frameworks */,
 				FF7BD5C57C6E4E22A567FE0F /* libRNSVG-tvOS.a in Frameworks */,
+				DA4786FBA477474F8475197C /* libFastImage-tvOS.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -699,6 +721,10 @@
 				D60EE952D61D4E8DBCC5BAFA /* RNPureJwt.xcodeproj */,
 				D753A00E5A894E0D996E8BB7 /* RNSVG.xcodeproj */,
 				19A3ED619DC1438B95461397 /* RNReactNativeZlib.xcodeproj */,
+				07AE8F2E39E94717BD81AFCE /* RNBlur.xcodeproj */,
+				917E4ADE5FB64B29A7810EBE /* SajjadBlurOverlay.xcodeproj */,
+				3379D32210CB467F9C725DDF /* FastImage.xcodeproj */,
+				E38B79F9A3104EC9B7F17A4B /* RCTOrientation.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -1373,6 +1399,12 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1394,6 +1426,10 @@
 					"$(SRCROOT)/../node_modules/react-native-pure-jwt/ios",
 					"$(SRCROOT)/../node_modules/react-native-svg/ios/**",
 					"$(SRCROOT)/../node_modules/@klarna/react-native-zlib/ios",
+					"$(SRCROOT)/../node_modules/@react-native-community/blur/ios",
+					"$(SRCROOT)/../node_modules/react-native-blur-overlay/ios",
+					"$(SRCROOT)/../node_modules/react-native-fast-image/ios/FastImage",
+					"$(SRCROOT)/../node_modules/react-native-orientation-locker/iOS/RCTOrientation",
 				);
 			};
 			name = Debug;
@@ -1423,6 +1459,12 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1444,6 +1486,10 @@
 					"$(SRCROOT)/../node_modules/react-native-pure-jwt/ios",
 					"$(SRCROOT)/../node_modules/react-native-svg/ios/**",
 					"$(SRCROOT)/../node_modules/@klarna/react-native-zlib/ios",
+					"$(SRCROOT)/../node_modules/@react-native-community/blur/ios",
+					"$(SRCROOT)/../node_modules/react-native-blur-overlay/ios",
+					"$(SRCROOT)/../node_modules/react-native-fast-image/ios/FastImage",
+					"$(SRCROOT)/../node_modules/react-native-orientation-locker/iOS/RCTOrientation",
 				);
 			};
 			name = Release;
@@ -1484,6 +1530,10 @@
 					"$(SRCROOT)/../node_modules/react-native-pure-jwt/ios",
 					"$(SRCROOT)/../node_modules/react-native-svg/ios/**",
 					"$(SRCROOT)/../node_modules/@klarna/react-native-zlib/ios",
+					"$(SRCROOT)/../node_modules/@react-native-community/blur/ios",
+					"$(SRCROOT)/../node_modules/react-native-blur-overlay/ios",
+					"$(SRCROOT)/../node_modules/react-native-fast-image/ios/FastImage",
+					"$(SRCROOT)/../node_modules/react-native-orientation-locker/iOS/RCTOrientation",
 				);
 			};
 			name = Debug;
@@ -1523,6 +1573,10 @@
 					"$(SRCROOT)/../node_modules/react-native-pure-jwt/ios",
 					"$(SRCROOT)/../node_modules/react-native-svg/ios/**",
 					"$(SRCROOT)/../node_modules/@klarna/react-native-zlib/ios",
+					"$(SRCROOT)/../node_modules/@react-native-community/blur/ios",
+					"$(SRCROOT)/../node_modules/react-native-blur-overlay/ios",
+					"$(SRCROOT)/../node_modules/react-native-fast-image/ios/FastImage",
+					"$(SRCROOT)/../node_modules/react-native-orientation-locker/iOS/RCTOrientation",
 				);
 			};
 			name = Release;
@@ -1560,6 +1614,12 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1581,6 +1641,10 @@
 					"$(SRCROOT)/../node_modules/react-native-pure-jwt/ios",
 					"$(SRCROOT)/../node_modules/react-native-svg/ios/**",
 					"$(SRCROOT)/../node_modules/@klarna/react-native-zlib/ios",
+					"$(SRCROOT)/../node_modules/@react-native-community/blur/ios",
+					"$(SRCROOT)/../node_modules/react-native-blur-overlay/ios",
+					"$(SRCROOT)/../node_modules/react-native-fast-image/ios/FastImage",
+					"$(SRCROOT)/../node_modules/react-native-orientation-locker/iOS/RCTOrientation",
 				);
 			};
 			name = Debug;
@@ -1618,6 +1682,12 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1639,6 +1709,10 @@
 					"$(SRCROOT)/../node_modules/react-native-pure-jwt/ios",
 					"$(SRCROOT)/../node_modules/react-native-svg/ios/**",
 					"$(SRCROOT)/../node_modules/@klarna/react-native-zlib/ios",
+					"$(SRCROOT)/../node_modules/@react-native-community/blur/ios",
+					"$(SRCROOT)/../node_modules/react-native-blur-overlay/ios",
+					"$(SRCROOT)/../node_modules/react-native-fast-image/ios/FastImage",
+					"$(SRCROOT)/../node_modules/react-native-orientation-locker/iOS/RCTOrientation",
 				);
 			};
 			name = Release;
@@ -1675,6 +1749,12 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1696,6 +1776,10 @@
 					"$(SRCROOT)/../node_modules/react-native-pure-jwt/ios",
 					"$(SRCROOT)/../node_modules/react-native-svg/ios/**",
 					"$(SRCROOT)/../node_modules/@klarna/react-native-zlib/ios",
+					"$(SRCROOT)/../node_modules/@react-native-community/blur/ios",
+					"$(SRCROOT)/../node_modules/react-native-blur-overlay/ios",
+					"$(SRCROOT)/../node_modules/react-native-fast-image/ios/FastImage",
+					"$(SRCROOT)/../node_modules/react-native-orientation-locker/iOS/RCTOrientation",
 				);
 			};
 			name = Debug;
@@ -1732,6 +1816,12 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1753,6 +1843,10 @@
 					"$(SRCROOT)/../node_modules/react-native-pure-jwt/ios",
 					"$(SRCROOT)/../node_modules/react-native-svg/ios/**",
 					"$(SRCROOT)/../node_modules/@klarna/react-native-zlib/ios",
+					"$(SRCROOT)/../node_modules/@react-native-community/blur/ios",
+					"$(SRCROOT)/../node_modules/react-native-blur-overlay/ios",
+					"$(SRCROOT)/../node_modules/react-native-fast-image/ios/FastImage",
+					"$(SRCROOT)/../node_modules/react-native-orientation-locker/iOS/RCTOrientation",
 				);
 			};
 			name = Release;

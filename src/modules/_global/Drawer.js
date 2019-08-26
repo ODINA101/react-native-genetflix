@@ -30,6 +30,7 @@ class Drawer extends Component {
 		this._goToMovies = this._goToMovies.bind(this);
 		this._goToFavorites = this._goToFavorites.bind(this);
 		this._goToCategories = this._goToCategories.bind(this);
+		this._goToCollections = this._goToCollections.bind(this);
 		this._openSearch = this._openSearch.bind(this);
 		this._goToSeries = this._goToSeries.bind(this);
 		this.state = {
@@ -221,6 +222,59 @@ class Drawer extends Component {
 
 	}
 
+
+
+
+
+
+	_goToCollections() {
+		// //		this._toggleDrawer();
+		// this.props.navigator.showModal({
+		// 	screen: 'movieapp.Favorites',
+		// 	title: 'Favorites'
+		// });
+		Navigation.mergeOptions(this.props.componentId, {
+			sideMenu: {
+				left: {
+					visible: false
+				}
+			}
+		});
+		Navigation.showModal({
+			stack: {
+				children: [{
+					component: {
+						name: 'movieapp.CollectionsPage',
+						options: {
+							topBar: {
+								height: 60,
+								background: {
+									color: "#0a0a0a",
+								},
+								title: {
+									text: 'კოლექციები',
+									color: "#FFF"
+								},
+								leftButtons: [
+									{
+										id: 'backButton',
+										icon: iconsMap['ios-arrow-round-back'],
+										color: "#FFF"
+									}
+								],
+							},
+						},
+					}
+				}]
+			}
+		})
+
+	}
+
+
+
+
+
 	_goToCategories() {
 		// //		this._toggleDrawer();
 		// this.props.navigator.showModal({
@@ -315,6 +369,14 @@ class Drawer extends Component {
 								{Categories}
 								<Text style={styles.drawerListItemText}>
 									კატეგორიები
+								</Text>
+							</View>
+						</TouchableOpacity>
+						<TouchableOpacity onPress={this._goToCollections}>
+							<View style={styles.drawerListItem}>
+								{Categories}
+								<Text style={styles.drawerListItemText}>
+									კოლექციები
 								</Text>
 							</View>
 						</TouchableOpacity>

@@ -1,6 +1,10 @@
 rootProject.name = 'netf'
-include ':@klarna_react-native-zlib'
-project(':@klarna_react-native-zlib').projectDir = new File(rootProject.projectDir, '../node_modules/@klarna/react-native-zlib/android')
+include ':react-native-orientation-locker'
+project(':react-native-orientation-locker').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-orientation-locker/android')
+include ':react-native-fast-image'
+project(':react-native-fast-image').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-fast-image/android')
+include ':react-native-blur-overlay'
+project(':react-native-blur-overlay').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-blur-overlay/android')
 include ':react-native-svg'
 project(':react-native-svg').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-svg/android')
 include ':react-native-pure-jwt'

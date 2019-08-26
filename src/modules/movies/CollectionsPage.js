@@ -19,8 +19,7 @@ import { iconsMap } from '../../utils/AppIcons';
 import { AsyncStorage } from 'react-native';
 
 import CardFour from './components/CardFour';
-import Categories from './categories'
-class CategoriesPage extends Component {
+class CollectionsPage extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -29,6 +28,12 @@ class CategoriesPage extends Component {
             currentPage: 1,
             list: []
         };
+
+
+
+
+        this.checkSubscription()
+
         //	this.props.navigator.setOnNavigatorEvent(this._onNavigatorEvent.bind(this));
     }
 
@@ -37,16 +42,35 @@ class CategoriesPage extends Component {
     }
 
     async _retrieveMoviesList(isRefreshed) {
-        var data = Categories;
-        const ds = new ListView.DataSource({ rowHasChanged: (row1, row2) => row1 !== row2 });
-        const dataSource = ds.cloneWithRows(data);
-        this.setState({
-            list: data,
-            dataSource,
-            isLoading: false
-        });
 
 
+        axios.get("http://adjaranet.com/req/jsondata/req.php?reqId=getCollections")
+            .then(res => {
+                res = res.data;
+                var FinalData = [];
+
+
+                Object.values(res).forEach((item, i) => {
+                    FinalData.push({
+                        name: item.name,
+                        id: Object.keys(res)[i]
+                    })
+                })
+
+
+                var data = FinalData;
+                const ds = new ListView.DataSource({ rowHasChanged: (row1, row2) => row1 !== row2 });
+                const dataSource = ds.cloneWithRows(data);
+                this.setState({
+                    list: data,
+                    dataSource,
+                    isLoading: false
+                });
+
+
+                //alert(JSON.stringify(res.data))
+                this.setState({ list: FinalData, isLoading: false })
+            })
 
         if (isRefreshed && this.setState({ isRefreshing: false }));
     }
@@ -78,6 +102,24 @@ class CategoriesPage extends Component {
         }
     }
 
+
+    async checkSubscription() {
+        try {
+            await InAppBilling.open();
+            // If subscriptions/products are updated server-side you
+            // will have to update cache with loadOwnedPurchasesFromGoogle()
+            await InAppBilling.loadOwnedPurchasesFromGoogle();
+            const isSubscribed = await InAppBilling.isSubscribed("noads597")
+            //   console.log("Customer subscribed: ", isSubscribed);
+            if (!isSubscribed) {
+                AdMobRewarded.requestAd().then(() => AdMobRewarded.showAd());
+            }
+        } catch (err) {
+            console.log(err);
+        } finally {
+            await InAppBilling.close();
+        }
+    }
 
     _viewCat(id, title, isCollection) {
 
@@ -173,7 +215,7 @@ class CategoriesPage extends Component {
                     renderRow={(item, i) => {
                         return (
 
-                            <CardFour fd={true} key={i} collections={false} info={item} viewCat={(id, title) => this._viewCat(id, title, false)} />
+                            <CardFour fd={true} key={i} collections={true} info={item} viewCat={(id, title) => this._viewCat(id, title, true)} />
                         )
                     }}
 
@@ -208,7 +250,7 @@ if (Platform.OS === 'ios') {
     };
 }
 
-CategoriesPage.navigatorStyle = {
+CollectionsPage.navigatorStyle = {
     ...navigatorStyle,
     statusBarColor: 'black',
     statusBarTextColorScheme: 'light',
@@ -228,4 +270,4 @@ function mapDispatchToProps(dispatch) {
     };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(CategoriesPage);
+export default connect(mapStateToProps, mapDispatchToProps)(CollectionsPage);
