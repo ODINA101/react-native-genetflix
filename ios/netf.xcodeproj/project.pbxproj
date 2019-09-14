@@ -83,6 +83,8 @@
 		DA4786FBA477474F8475197C /* libFastImage-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = ECD9D02D99AD43DE9B4DCB81 /* libFastImage-tvOS.a */; };
 		BE50D3FB42514D6082184D01 /* libRCTOrientation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A45FEE3439CA411A9DAE4564 /* libRCTOrientation.a */; };
 		2DCD1859099848BC8BB9A2E3 /* libRCTOrientation-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 08E0332E1EE54EA6A8EAF3E3 /* libRCTOrientation-tvOS.a */; };
+		3E89DAAE8802489FAF4B674B /* libRNLocalize.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 74E3392DB88845BBBB2DD2C3 /* libRNLocalize.a */; };
+		DBD93269B7A649B188D93323 /* libRNLocalize-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D81E07FA67464C1682A556A7 /* libRNLocalize-tvOS.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -456,6 +458,9 @@
 		E38B79F9A3104EC9B7F17A4B /* RCTOrientation.xcodeproj */ = {isa = PBXFileReference; name = "RCTOrientation.xcodeproj"; path = "../node_modules/react-native-orientation-locker/iOS/RCTOrientation.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
 		A45FEE3439CA411A9DAE4564 /* libRCTOrientation.a */ = {isa = PBXFileReference; name = "libRCTOrientation.a"; path = "libRCTOrientation.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
 		08E0332E1EE54EA6A8EAF3E3 /* libRCTOrientation-tvOS.a */ = {isa = PBXFileReference; name = "libRCTOrientation-tvOS.a"; path = "libRCTOrientation-tvOS.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		7F90ABD610FE40109DA91207 /* RNLocalize.xcodeproj */ = {isa = PBXFileReference; name = "RNLocalize.xcodeproj"; path = "../node_modules/react-native-localize/ios/RNLocalize.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		74E3392DB88845BBBB2DD2C3 /* libRNLocalize.a */ = {isa = PBXFileReference; name = "libRNLocalize.a"; path = "libRNLocalize.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		D81E07FA67464C1682A556A7 /* libRNLocalize-tvOS.a */ = {isa = PBXFileReference; name = "libRNLocalize-tvOS.a"; path = "libRNLocalize-tvOS.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -509,6 +514,7 @@
 				2712D4D1E48446BF81862578 /* libFastImage.a in Frameworks */,
 				BE50D3FB42514D6082184D01 /* libRCTOrientation.a in Frameworks */,
 				2DCD1859099848BC8BB9A2E3 /* libRCTOrientation-tvOS.a in Frameworks */,
+				3E89DAAE8802489FAF4B674B /* libRNLocalize.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -529,6 +535,7 @@
 				719F8F12883B4C9AB08540FE /* libReactNativeConfig-tvOS.a in Frameworks */,
 				FF7BD5C57C6E4E22A567FE0F /* libRNSVG-tvOS.a in Frameworks */,
 				DA4786FBA477474F8475197C /* libFastImage-tvOS.a in Frameworks */,
+				DBD93269B7A649B188D93323 /* libRNLocalize-tvOS.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -725,6 +732,7 @@
 				917E4ADE5FB64B29A7810EBE /* SajjadBlurOverlay.xcodeproj */,
 				3379D32210CB467F9C725DDF /* FastImage.xcodeproj */,
 				E38B79F9A3104EC9B7F17A4B /* RCTOrientation.xcodeproj */,
+				7F90ABD610FE40109DA91207 /* RNLocalize.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -1405,6 +1413,8 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1430,6 +1440,7 @@
 					"$(SRCROOT)/../node_modules/react-native-blur-overlay/ios",
 					"$(SRCROOT)/../node_modules/react-native-fast-image/ios/FastImage",
 					"$(SRCROOT)/../node_modules/react-native-orientation-locker/iOS/RCTOrientation",
+					"$(SRCROOT)/../node_modules/react-native-localize/ios",
 				);
 			};
 			name = Debug;
@@ -1465,6 +1476,8 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1490,6 +1503,7 @@
 					"$(SRCROOT)/../node_modules/react-native-blur-overlay/ios",
 					"$(SRCROOT)/../node_modules/react-native-fast-image/ios/FastImage",
 					"$(SRCROOT)/../node_modules/react-native-orientation-locker/iOS/RCTOrientation",
+					"$(SRCROOT)/../node_modules/react-native-localize/ios",
 				);
 			};
 			name = Release;
@@ -1534,6 +1548,7 @@
 					"$(SRCROOT)/../node_modules/react-native-blur-overlay/ios",
 					"$(SRCROOT)/../node_modules/react-native-fast-image/ios/FastImage",
 					"$(SRCROOT)/../node_modules/react-native-orientation-locker/iOS/RCTOrientation",
+					"$(SRCROOT)/../node_modules/react-native-localize/ios",
 				);
 			};
 			name = Debug;
@@ -1577,6 +1592,7 @@
 					"$(SRCROOT)/../node_modules/react-native-blur-overlay/ios",
 					"$(SRCROOT)/../node_modules/react-native-fast-image/ios/FastImage",
 					"$(SRCROOT)/../node_modules/react-native-orientation-locker/iOS/RCTOrientation",
+					"$(SRCROOT)/../node_modules/react-native-localize/ios",
 				);
 			};
 			name = Release;
@@ -1620,6 +1636,8 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1645,6 +1663,7 @@
 					"$(SRCROOT)/../node_modules/react-native-blur-overlay/ios",
 					"$(SRCROOT)/../node_modules/react-native-fast-image/ios/FastImage",
 					"$(SRCROOT)/../node_modules/react-native-orientation-locker/iOS/RCTOrientation",
+					"$(SRCROOT)/../node_modules/react-native-localize/ios",
 				);
 			};
 			name = Debug;
@@ -1688,6 +1707,8 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1713,6 +1734,7 @@
 					"$(SRCROOT)/../node_modules/react-native-blur-overlay/ios",
 					"$(SRCROOT)/../node_modules/react-native-fast-image/ios/FastImage",
 					"$(SRCROOT)/../node_modules/react-native-orientation-locker/iOS/RCTOrientation",
+					"$(SRCROOT)/../node_modules/react-native-localize/ios",
 				);
 			};
 			name = Release;
@@ -1755,6 +1777,8 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1780,6 +1804,7 @@
 					"$(SRCROOT)/../node_modules/react-native-blur-overlay/ios",
 					"$(SRCROOT)/../node_modules/react-native-fast-image/ios/FastImage",
 					"$(SRCROOT)/../node_modules/react-native-orientation-locker/iOS/RCTOrientation",
+					"$(SRCROOT)/../node_modules/react-native-localize/ios",
 				);
 			};
 			name = Debug;
@@ -1822,6 +1847,8 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1847,6 +1874,7 @@
 					"$(SRCROOT)/../node_modules/react-native-blur-overlay/ios",
 					"$(SRCROOT)/../node_modules/react-native-fast-image/ios/FastImage",
 					"$(SRCROOT)/../node_modules/react-native-orientation-locker/iOS/RCTOrientation",
+					"$(SRCROOT)/../node_modules/react-native-localize/ios",
 				);
 			};
 			name = Release;

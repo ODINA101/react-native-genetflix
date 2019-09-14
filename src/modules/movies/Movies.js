@@ -24,6 +24,10 @@ import { iconsMap } from '../../utils/AppIcons';
 import axios from "axios"
 import { BackHandler as BackAndroid } from 'react-native'
 import BlurOverlay, { closeOverlay, openOverlay } from 'react-native-blur-overlay';
+import CodePushComponent from '../../CodePushComponent'
+
+
+
 
 import List from "./categories"
 import InAppBilling from "react-native-billing";
@@ -55,29 +59,8 @@ class Movies extends Component {
 		this._onRefresh = this._onRefresh.bind(this);
 		this.openSearch = this.openSearch.bind(this)
 		this._retrieveMovies = this._retrieveMovies.bind(this)
-		// 	this.props.navigator.setOnNavigatorEvent((event)=> {
-		// 		if (event.type === 'NavBarButtonPress') {
-		// 		if(event.id === 'Search') {
-		//  this.openSearch()
-		// 		}
-		// 	}
-		// 	});
 
-
-		//alert(JSON.stringify(props))
-		//.setOnNavigatorEvent(this.onNavigatorEvent.bind(this))
 		AdMobInterstitial.setAdUnitID('ca-app-pub-6370427711797263/7435578378');
-		AdMobRewarded.setAdUnitID('ca-app-pub-6370427711797263/5458913307')
-		//	this.checkSubscription()
-		//AdMobInterstitial.requestAd().then(() => AdMobInterstitial.showAd());
-		//alert(List)
-		//  this.props.navigator.setButtons({leftButtons:[{id:'sideMenu'}],rightButtons:[
-		// 	 {
-		// 			id: 'Search',
-		// 			title: 'Search',
-		// 			icon: iconsMap['ios-search']
-		// 		}
-		// 	 ]})
 
 
 		Navigation.mergeOptions(this.props.componentId, {
@@ -121,15 +104,12 @@ class Movies extends Component {
 		}, 1000)
 	}
 
-
 	async checkSubscription() {
 		try {
 			await InAppBilling.open();
-			// If subscriptions/products are updated server-side you
-			// will have to update cache with loadOwnedPurchasesFromGoogle()
 			await InAppBilling.loadOwnedPurchasesFromGoogle();
 			const isSubscribed = await InAppBilling.isSubscribed("noads597")
-			//   alert("Customer subscribed: " + isSubscribed);
+
 			if (!isSubscribed) {
 				AdMobInterstitial.requestAd().then(() => AdMobInterstitial.showAd());
 			}
@@ -153,8 +133,6 @@ class Movies extends Component {
 	}
 
 	navigationButtonPressed({ buttonId }) {
-		//alert("aee chemi kargi movtyan exla gedemeketa")
-
 		if (buttonId == "sideMenu") {
 
 			Navigation.mergeOptions(this.props.componentId, {
@@ -324,9 +302,7 @@ class Movies extends Component {
 									}
 								],
 								rightButtons: [
-
 									{
-
 										id: 'filter',
 										icon: fltrIcon,
 										color: '#FFF'
@@ -657,7 +633,7 @@ class Movies extends Component {
 							</View>
 						</View>
 					</ScrollView>
-
+					<CodePushComponent />
 				</View>
 		);
 	}

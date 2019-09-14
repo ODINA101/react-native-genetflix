@@ -59,7 +59,7 @@ class CardThree extends Component {
 			<View style={styles.cardContainer}>
 				<TouchableOpacity activeOpacity={0.9} onPress={() => { viewMovie(info, this.state.des, this.state.genres) }}>
 					<View style={styles.card}>
-						<Image PlaceholderContent={<ActivityIndicator />} source={{ uri: searching ? ("http://staticnet.adjara.com/moviecontent/" + info.id + "/covers/214x321-" + info.id + ".jpg") : (info.poster) }} style={styles.cardImage} />
+						<Image PlaceholderContent={<ActivityIndicator />} source={{ uri: searching ? ("http://staticnet.adjara.com/moviecontent/" + info.id + "/covers/214x321-" + info.id + ".jpg") : ('http:' + info.poster) }} style={styles.cardImage} />
 						<View style={styles.cardDetails}>
 							<Text
 								style={styles.cardTitle}

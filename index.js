@@ -1,7 +1,6 @@
-import App from './src/app';
-const _XHR = GLOBAL.originalXMLHttpRequest ?
-    GLOBAL.originalXMLHttpRequest :
-    GLOBAL.XMLHttpRequest
+//import * as RNLocalize from "react-native-localize";
+  import App from './src/app';	
 
-XMLHttpRequest = _XHR
+//
+
 console.disableYellowBox = true;

@@ -53,9 +53,8 @@ import ViewShot from "react-native-view-shot";
 import Share from 'react-native-share';
 import InAppBilling from "react-native-billing";
 import { Image } from "react-native-elements"
-
+import publicIP from 'react-native-public-ip';
 import Orientation from 'react-native-orientation-locker';
-
 import base64 from "react-native-base64";
 //import QRCode from 'react-native-qrcode';
 import QRCode from 'react-native-qrcode-svg';
@@ -338,7 +337,7 @@ class Movie extends Component {
 			// will have to update cache with loadOwnedPurchasesFromGoogle()
 			await InAppBilling.loadOwnedPurchasesFromGoogle();
 			const isSubscribed = await InAppBilling.isSubscribed("noads597")
-			//   console.log("Customer subscribed: ", isSubscribed);
+			//		console.log(ip);
 			if (!isSubscribed) {
 				AdMobInterstitial.requestAd().then(() => AdMobInterstitial.showAd());
 			}
@@ -347,6 +346,8 @@ class Movie extends Component {
 		} finally {
 			await InAppBilling.close();
 		}
+
+
 	}
 
 
@@ -1039,7 +1040,7 @@ class Movie extends Component {
 						</Modal>
 						<View style={{ height }}>
 							<View>
-								<Image blurRadius={2} source={{ uri: searching ? ("http://staticnet.adjara.com/moviecontent/" + movieId + "/covers/214x321-" + movieId + ".jpg") : (item.poster) }} style={styles.imageBackdrop} />
+								<Image blurRadius={2} source={{ uri: searching ? ("http://staticnet.adjara.com/moviecontent/" + movieId + "/covers/214x321-" + movieId + ".jpg") : ('http:' + item.poster) }} style={styles.imageBackdrop} />
 
 								<LinearGradient colors={['rgba(0, 0, 0, 0.2)', 'rgba(0,0,0, 0.2)', 'rgba(0,0,0, 0.7)']} style={styles.linearGradient} />
 
@@ -1067,7 +1068,7 @@ class Movie extends Component {
 							</View>
 
 							<View style={styles.cardContainer}>
-								<Image source={{ uri: searching ? ("http://staticnet.adjara.com/moviecontent/" + movieId + "/covers/214x321-" + movieId + ".jpg") : (item.poster) }} style={styles.cardImage} />
+								<Image source={{ uri: searching ? ("http://staticnet.adjara.com/moviecontent/" + movieId + "/covers/214x321-" + movieId + ".jpg") : ('http:' + item.poster) }} style={styles.cardImage} />
 								<View style={styles.cardDetails}>
 									<Text style={styles.cardTitle}>{this.checkTitle(item)}</Text>
 									<Text style={styles.cardTagline}></Text>

@@ -15,6 +15,10 @@ import styles from './styles/Drawer';
 import { iconsMap } from '../../utils/AppIcons';
 import InAppBilling from "react-native-billing";
 
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+
+
+MaterialIcons.getImageSource('filter-list', 28, '#F5002A').then((source) => { fltrIcon = source });
 const itemSkus = Platform.select({
 	ios: [
 		'noads597'
@@ -160,7 +164,16 @@ class Drawer extends Component {
 									text: 'სერიალები',
 									color: "#FFF"
 								},
+
+								rightButtons: [
+									{
+										id: 'filter',
+										icon: fltrIcon,
+										color: '#FFF'
+									}
+								],
 								leftButtons: [
+
 									{
 										id: 'backButton',
 										icon: iconsMap['ios-arrow-round-back'],

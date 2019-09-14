@@ -1,5 +1,4 @@
 apply plugin: "com.android.application"
-
 import com.android.build.OutputFile
 
 /**
@@ -77,6 +76,7 @@ project.ext.react = [
 ]
 
 apply from: "../../node_modules/react-native/react.gradle"
+apply from: "../../node_modules/react-native-code-push/android/codepush.gradle"
 
 /**
  * Set this to true to create two separate APKs instead of one:
@@ -103,12 +103,10 @@ android {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
          missingDimensionStrategy "RNN.reactNativeVersion", "reactNative57_5" // See note below!
-         versionCode 50286
-         versionName "96" 
+         versionCode 50294
+         versionName "104" 
          missingDimensionStrategy 'react-native-camera',  'general'
          multiDexEnabled true
-         renderscriptTargetApi 23
-         renderscriptSupportModeEnabled true
     }
      compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -167,6 +165,11 @@ configurations.all {
 }
 
 dependencies {
+    implementation project(':react-native-localize')
+    implementation project(':react-native-code-push')
+    implementation project(':appcenter-crashes')
+    implementation project(':appcenter-analytics')
+    implementation project(':appcenter')
     implementation project(':react-native-orientation-locker')
     implementation project(':react-native-fast-image')
     def multidex_version = "2.0.1"

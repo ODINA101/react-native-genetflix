@@ -9,7 +9,6 @@ import {
 import Icon from 'react-native-vector-icons/Ionicons';
 import { Image } from 'react-native-elements';
 import LinearGradient from 'react-native-linear-gradient';
-
 import styles from './styles/CardOne';
 import { TMDB_IMG_URL } from '../../../constants/api';
 
@@ -28,10 +27,10 @@ export default class CardOne extends Component {
 
 		return (
 			<View>
-				<Image blurRadius={1} source={{ uri: info.poster }} style={styles.imageBackdrop} />
+				<Image blurRadius={1} source={{ uri: 'http:' + info.poster }} style={styles.imageBackdrop} />
 				<LinearGradient colors={['rgba(0, 0, 0, 0.5)', 'rgba(0,0,0, 0.7)', 'rgba(0,0,0, 0.8)']} style={styles.linearGradient} />
 				<View style={styles.cardContainer}>
-					<Image PlaceholderContent={<ActivityIndicator />} source={{ uri: info.poster }} style={styles.cardImage} />
+					<Image PlaceholderContent={<ActivityIndicator />} source={{ uri: 'http:' + info.poster }} style={styles.cardImage} />
 					<View style={styles.cardDetails}>
 						<Text style={styles.cardTitle} numberOfLines={2}>
 							{checkTitle(info)}

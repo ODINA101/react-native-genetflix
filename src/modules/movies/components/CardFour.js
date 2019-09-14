@@ -50,7 +50,7 @@ export default class CardFour extends Component {
                 borderRadius={20}
                 resizeMode="cover"
                 opacity={0.5}
-                source={{ uri: this.props.info.url ? (this.props.info.url) : ("https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/No_image_3x4.svg/1280px-No_image_3x4.svg.png") }} style={{ flex: 1 }}>
+                source={{ uri: 'http:' + this.props.info.url ? (this.props.info.url) : ("https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/No_image_3x4.svg/1280px-No_image_3x4.svg.png") }} style={{ flex: 1 }}>
               </ImageBackground>
             )
         }

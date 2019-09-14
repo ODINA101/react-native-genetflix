@@ -4,6 +4,7 @@ package irakli.samniashvili.app;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.reactcommunity.rnlocalize.RNLocalizePackage;
 import org.wonday.orientation.OrientationPackage;
 import com.dylanvann.fastimage.FastImageViewPackage;
 import com.horcrux.svg.SvgPackage;
@@ -51,8 +52,9 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import org.wonday.orientation.OrientationPackage;
 
-
-public class MainApplication extends NavigationApplication {
+import com.facebook.react.ReactInstanceManager;
+import com.microsoft.codepush.react.CodePush;
+public class MainApplication extends NavigationApplication  {
 
    @Override
    public void onConfigurationChanged(Configuration newConfig) {
@@ -67,28 +69,33 @@ public class MainApplication extends NavigationApplication {
         super.attachBaseContext(base);
         MultiDex.install(this);
     }
-
     @Override
     protected ReactGateway createReactGateway() {
         ReactNativeHost host = new NavigationReactNativeHost(this, isDebug(), createAdditionalReactPackages()) {
+            @javax.annotation.Nullable
             @Override
-            protected String getJSMainModuleName() {
-                return "index";
+            protected String getJSBundleFile() {
+                return CodePush.getJSBundleFile();
             }
+
+                @Override
+                protected String getJSMainModuleName() {
+                    return "index";
+                }
         };
         return new ReactGateway(this, isDebug(), host);
     }
-
+   
     @Override
     public boolean isDebug() {
         return BuildConfig.DEBUG;
     }
 
     protected List<ReactPackage> getPackages() {
-        // Add additional packages you require here
-        // No need to add RnnPackage and MainReactPackage
         return Arrays.<ReactPackage>asList(
+    new CodePush("pSnDoF3MeNZP30ZAP5yup0nJS8Go913e55f5-a48d-45e1-b5a0-f3ea65347dd7",getApplicationContext(),BuildConfig.DEBUG,R.string.CodePushPublicKey),
         new OrientationPackage(),    
+        new RNLocalizePackage(),
         new FastImageViewPackage(),new RNSharePackage(), new RNViewShotPackage(),
 
          new RNPureJwtPackage(), new RNCWebViewPackage(), new SvgPackage(), 
@@ -103,5 +110,9 @@ public class MainApplication extends NavigationApplication {
     public List<ReactPackage> createAdditionalReactPackages() {
         return getPackages();
     }
-
+    //  @Override
+    // public ReactInstanceManager getReactInstanceManager() {
+    //     // CodePush must be told how to find React Native instance
+    //     return getReactNativeHost().getReactInstanceManager();
+    // }
 }

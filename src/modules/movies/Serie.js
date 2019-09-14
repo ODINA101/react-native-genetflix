@@ -59,7 +59,6 @@ import Share from 'react-native-share';
 import SimpleCrypto from "simple-crypto-js";
 import QRCode from 'react-native-qrcode-svg';
 import { BackHandler as BackAndroid } from 'react-native'
-
 var seasons = [];
 var szn = [];
 var qualitiesObjs = [];
@@ -406,11 +405,24 @@ class Serie extends Component {
 			.then(res => res.json())
 			.then(res => {
 
-
 				const myarr = Object.keys(res).map(i => res[i]);
-				this.setState({ link: myarr[myarr.length - 1], des: res.desc });
-				//alert(myarr[myarr.length - 1])
+				let lnk = '';
 
+
+				axios.get('http://net.adjara.com/Movie/main?id=' + this.props.item.id + '&serie=1&js=1')
+					.then(res => {
+						let link = "";
+						let pop = res.data.match('(http)(.*)(_\\{lang\\}_\\{quality\\}\\.mp4)');
+						let arrsp = pop.toString().split('/');
+						//alert(arrsp)
+						link = (arrsp[2] + '/' + arrsp[3] + '/' + arrsp[4] + '/' + this.props.item.id + '/');
+						lnk = link;
+						console.log(link)
+						this.setState({ link })
+					})
+
+
+				this.setState({ des: res.desc });
 				myarr.forEach(item => {
 					if (item[1]) {
 						if (typeof item === 'object') {
@@ -1024,7 +1036,7 @@ class Serie extends Component {
 
 						<View style={{ height }}>
 							<View>
-								<Image blurRadius={2} source={{ uri: item.poster ? (item.poster) : ("http://staticnet.adjara.com/moviecontent/" + item.id + "/covers/214x321-" + item.id + ".jpg") }} style={styles.imageBackdrop} />
+								<Image blurRadius={2} source={{ uri: item.poster ? ('http:' + item.poster) : ("http://staticnet.adjara.com/moviecontent/" + item.id + "/covers/214x321-" + item.id + ".jpg") }} style={styles.imageBackdrop} />
 								<LinearGradient colors={['rgba(0, 0, 0, 0.2)', 'rgba(0,0,0, 0.2)', 'rgba(0,0,0, 0.7)']} style={styles.linearGradient} />
 								<View style={{ position: 'absolute', top: 100, alignSelf: 'center', flexDirection: 'row' }}>
 									<TouchableOpacity style={{ width: 50, height: 50 }} onPress={() => {
@@ -1042,7 +1054,7 @@ class Serie extends Component {
 							</View>
 
 							<View style={styles.cardContainer}>
-								<Image source={{ uri: item.poster ? (item.poster) : ("http://staticnet.adjara.com/moviecontent/" + item.id + "/covers/214x321-" + item.id + ".jpg") }} style={styles.cardImage} />
+								<Image source={{ uri: item.poster ? ('http:' + item.poster) : ("http://staticnet.adjara.com/moviecontent/" + item.id + "/covers/214x321-" + item.id + ".jpg") }} style={styles.cardImage} />
 								<View style={styles.cardDetails}>
 									<Text style={styles.cardTitle}>{this.checkTitle(item)}</Text>
 									<Text style={styles.cardTagline}></Text>
