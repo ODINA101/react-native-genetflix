@@ -13,7 +13,7 @@
     "convert-string-to-number": "^1.0.3",
     "firebase": "^5.11.1",
     "loadash": "^1.0.0",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.19",
     "mathjs": "^5.9.0",
     "moment": "^2.24.0",
     "numeral": "^2.0.6",
